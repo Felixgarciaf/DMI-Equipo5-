@@ -1,14 +1,11 @@
 # Registro de riesgos — CampusOps
 
-> Registren exactamente tres riesgos y ordénenlos del más al menos prioritario.
-
 | Prioridad | Riesgo | Probabilidad | Impacto | Mitigación | Cómo comprobar la mitigación |
 |---:|---|---|---|---|---|
-| 1 | [riesgo] | [baja/media/alta y motivo] | [bajo/medio/alto y motivo] | [acción] | [evidencia observable] |
-| 2 | [riesgo] | [baja/media/alta y motivo] | [bajo/medio/alto y motivo] | [acción] | [evidencia observable] |
-| 3 | [riesgo] | [baja/media/alta y motivo] | [bajo/medio/alto y motivo] | [acción] | [evidencia observable] |
+| 1 | Conflicto de reasignación concurrente durante modo offline | Media (es común que el coordinador reasigne si el técnico parece inactivo al no tener red) | Alto (riesgo de pérdida silenciosa de trabajo o sobrescritura de decisiones de coordinación) | Detección de conflictos al sincronizar, preservando el cambio remoto e informando al técnico sin descartar sus notas locales | Simular reasignación remota y sincronizar app offline; el sistema debe notificar conflicto conservando ambas acciones |
+| 2 | Pérdida de cambios no sincronizados por cierre de la aplicación | Alta (el sistema operativo móvil cierra frecuentemente apps en segundo plano para liberar memoria) | Alto (el técnico perdería la evidencia de todo su trabajo y tendría que recapturar datos) | Almacenar inmediatamente las operaciones en una cola persistente local (en disco) antes del envío a red | Registrar nota offline, forzar el cierre de la app y reabrirla; la operación pendiente debe seguir conservada en la cola |
+| 3 | Falla en servicio externo de geocodificación al crear incidencia | Media (dependencia de una API de terceros y de la estabilidad de la conexión del reportante) | Medio (no se obtiene coordenada precisa, pero la incidencia aún puede ser reportada) | Configurar un timeout para la API externa y habilitar un campo de texto alternativo para ubicación manual | Bloquear red en simulador al crear reporte; tras el timeout, la app debe permitir escribir la ubicación manualmente sin trabarse |
 
 ## Riesgo que atenderíamos primero
 
-[Indiquen cuál y justifiquen la decisión.]
-
+Atenderíamos primero el **riesgo de conflicto de reasignación concurrente (Prioridad 1)**. En una aplicación de operaciones móviles offline, la integridad de los datos es la base de la confianza en el sistema. Si el técnico detecta que su trabajo se pierde o que la aplicación sobrescribe órdenes de coordinación de manera silenciosa, la herramienta se vuelve inútil y genera caos operativo. Diseñar el esquema de resolución de conflictos desde el inicio es fundamental, ya que afecta profundamente el diseño de la base de datos local, la cola de sincronización y el flujo de los tres actores.
