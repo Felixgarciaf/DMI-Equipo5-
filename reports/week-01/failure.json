@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "week": 1,
   "mode": "evidence",
-  "commitSha": "8875ccc808a0bbb5173aa7efcd73c1e34fd70471",
-  "evaluatedAt": "2026-09-07T05:58:12.809436+00:00",
+  "commitSha": "b5bcd2e852738cc7bd5d4b549207fbaaea15c104",
+  "evaluatedAt": "2026-09-07T06:00:20.840136+00:00",
   "status": "fail",
   "checks": [
     {
@@ -54,7 +54,7 @@
     {
       "id": "frozen_sha",
       "status": "pass",
-      "detail": "tag=week-01-final tagSha=8875ccc808a0bbb5173aa7efcd73c1e34fd70471 head=8875ccc808a0bbb5173aa7efcd73c1e34fd70471"
+      "detail": "tag=week-01-final tagSha=b5bcd2e852738cc7bd5d4b549207fbaaea15c104 head=b5bcd2e852738cc7bd5d4b549207fbaaea15c104"
     }
   ]
 }
