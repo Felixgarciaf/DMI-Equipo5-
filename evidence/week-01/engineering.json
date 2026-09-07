@@ -1,20 +1,22 @@
 {
-  "_instructions": "Eliminen este campo cuando terminen. Comparen alternativas reales y relacionen la decisión con una comprobación ejecutada.",
   "schemaVersion": 1,
   "week": 1,
-  "commitSha": "REEMPLAZAR_CON_SHA_DEL_COMMIT_DE_CODIGO_Y_DOCUMENTOS",
-  "decision": "REEMPLAZAR_CON_LA_DECISION_DE_ALCANCE_RIESGO_O_ACEPTACION",
+  "commitSha": "6ff5091311518bae16d8d0d8110cb1dd0c48e029",
+  "decision": "Priorizar una estrategia de persistencia local de cambios offline mediante una cola pendiente de sincronizacion, junto con deteccion de conflictos al sincronizar reasignaciones, para proteger la integridad de los datos.",
   "alternatives": [
-    "REEMPLAZAR_CON_PRIMERA_ALTERNATIVA_REAL",
-    "REEMPLAZAR_CON_SEGUNDA_ALTERNATIVA_REAL"
+    "Persistir los cambios realizados sin conexion en una cola local y sincronizarlos cuando se recupere la conectividad, detectando conflictos de reasignacion.",
+    "Mantener los cambios unicamente en memoria y enviarlos directamente al servidor cuando exista conectividad, sin una cola persistente local."
   ],
-  "tradeoff": "REEMPLAZAR_CON_EL_BENEFICIO_Y_EL_COSTO_DE_LA_DECISION",
-  "requirementIds": ["AC-02", "AC-04"],
+  "tradeoff": "La primera alternativa ofrece mayor resiliencia ante cierres de la aplicacion o perdida de conectividad y permite conservar cambios pendientes para sincronizarlos posteriormente, ademas de manejar conflictos de reasignacion. Su costo es una mayor complejidad de implementacion, ya que requiere persistencia local, sincronizacion y reglas de resolucion de conflictos. La segunda alternativa es mas sencilla de implementar, pero tiene mayor riesgo de perdida de cambios cuando el dispositivo queda sin conexion o la aplicacion se cierra antes de sincronizar.",
+  "requirementIds": [
+    "AC-02",
+    "AC-04"
+  ],
   "verification": [
     {
-      "command": "REEMPLAZAR_CON_COMANDO_EJECUTADO",
-      "result": "REEMPLAZAR_CON_RESULTADO_OBSERVADO",
-      "evidence": "REEMPLAZAR_CON_ARCHIVO_REPORTE_O_SALIDA_QUE_LO_DEMUESTRA"
+      "command": "npm --cache .npm-cache test -- --ci --runInBand course-tests/public/week-01.test.ts",
+      "result": "PASS: 1 test suite passed y 1 test passed.",
+      "evidence": "course-tests/public/week-01.test.ts"
     }
   ]
 }
