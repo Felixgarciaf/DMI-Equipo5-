@@ -1,20 +1,22 @@
 {
-  "_instructions": "Eliminen este campo cuando terminen. Comparen alternativas reales y relacionen la decisión con una comprobación ejecutada.",
   "schemaVersion": 1,
   "week": 1,
-  "commitSha": "REEMPLAZAR_CON_SHA_DEL_COMMIT_DE_CODIGO_Y_DOCUMENTOS",
-  "decision": "REEMPLAZAR_CON_LA_DECISION_DE_ALCANCE_RIESGO_O_ACEPTACION",
+  "commitSha": "6ff5091311518bae16d8d0d8110cb1dd0c48e029",
+  "decision": "Decidimos priorizar el desarrollo de una arquitectura de sincronización offline basada en intenciones (conservando la intención local sin sobrescribir a la fuerza) para evitar conflictos de datos por reasignación, excluyendo del alcance inicial funciones accesorias como el chat.",
   "alternatives": [
-    "REEMPLAZAR_CON_PRIMERA_ALTERNATIVA_REAL",
-    "REEMPLAZAR_CON_SEGUNDA_ALTERNATIVA_REAL"
+    "Usar un esquema 'Last-write-wins' (el último dispositivo en conectarse sobrescribe los datos), lo que causaría pérdida silenciosa del trabajo del coordinador.",
+    "Bloqueo pesimista: no permitir atender tickets si no hay conexión, previniendo conflictos pero bloqueando totalmente el trabajo del técnico en el campo."
   ],
-  "tradeoff": "REEMPLAZAR_CON_EL_BENEFICIO_Y_EL_COSTO_DE_LA_DECISION",
-  "requirementIds": ["AC-02", "AC-04"],
+  "tradeoff": "Beneficio: Garantiza la integridad de datos de las incidencias operando en zonas sin señal, previniendo sobrescrituras silenciosas. Costo: Aumenta la complejidad técnica del manejo de base de datos local y sacrifica el tiempo disponible para integrar un chat en tiempo real.",
+  "requirementIds": [
+    "AC-02",
+    "AC-04"
+  ],
   "verification": [
     {
-      "command": "REEMPLAZAR_CON_COMANDO_EJECUTADO",
-      "result": "REEMPLAZAR_CON_RESULTADO_OBSERVADO",
-      "evidence": "REEMPLAZAR_CON_ARCHIVO_REPORTE_O_SALIDA_QUE_LO_DEMUESTRA"
+      "command": "npm run test:smoke",
+      "result": "PASS course-tests/smoke.test.tsx",
+      "evidence": "Ejecutamos la prueba y obtuvimos la validación (renders the reproducible baseline and resolves backend state), confirmando que el entorno arranca correctamente para soportar la arquitectura definida."
     }
   ]
 }

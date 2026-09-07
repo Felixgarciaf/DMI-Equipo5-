@@ -1,41 +1,40 @@
 {
-  "_instructions": "Eliminen este campo cuando terminen. Conserven exactamente tres integrantes y usen SHA Git completos de commits creados por cada persona.",
   "schemaVersion": 1,
   "week": 1,
-  "teamId": "REEMPLAZAR_CON_ID_DEL_EQUIPO",
+  "teamId": "Equipo-5",
   "members": [
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_1",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
-      "tests": [],
+      "studentId": "Felix-3523110172",
+      "commitShas": ["6ff5091311518bae16d8d0d8110cb1dd0c48e029"],
+      "files": ["App.tsx", "docs/problem-definition.md", "docs/risk-register.md"],
+      "tests": ["npm run test:smoke"],
       "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "prediction": "Esperaba que al cambiar el texto CampusOps la prueba test:smoke fallara porque no encontraría el elemento",
+      "command": "npm run test:smoke",
+      "observedResult": "La prueba falló con el mensaje Unable to find an element with text: CampusOps",
+      "explanation": "La aserción buscaba un texto exacto que ya no estaba en la pantalla visual."
     },
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_2",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
+      "studentId": "Claudia",
+      "commitShas": ["b7d4cfd293d1a5d16c8bfaba5eae73b1cae75e34"],
+      "files": ["evidence/week-01/engineering.json"],
       "tests": [],
-      "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "reviews": ["Revisión del engineering.json"],
+      "prediction": "Esperaba que la decisión documentada cubriera el problema de concurrencia offline",
+      "command": "cat evidence/week-01/engineering.json",
+      "observedResult": "El archivo JSON es válido y contiene la mitigación del riesgo offline",
+      "explanation": "La arquitectura basada en intenciones es válida según los requisitos de CampusOps."
     },
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_3",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
-      "tests": [],
+      "studentId": "Cesar",
+      "commitShas": ["73e2dd22a707b9a6e20ae540f96661ec550cb10a"],
+      "files": ["reports/week-01/baseline.json"],
+      "tests": ["make feedback"],
       "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "prediction": "Esperaba que las comprobaciones públicas pasaran sin errores de formato",
+      "command": "make feedback",
+      "observedResult": "Todos los tests pasaron exitosamente",
+      "explanation": "El proyecto original funciona correctamente tras la corrección de la falla."
     }
   ]
 }
