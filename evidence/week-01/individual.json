@@ -1,3 +1,4 @@
+
 {
   "schemaVersion": 1,
   "week": 1,
@@ -15,17 +16,6 @@
       "explanation": "La aserción buscaba un texto exacto que ya no estaba en la pantalla visual."
     },
     {
-      "studentId": "Claudia",
-      "commitShas": ["b7d4cfd293d1a5d16c8bfaba5eae73b1cae75e34"],
-      "files": ["evidence/week-01/engineering.json"],
-      "tests": [],
-      "reviews": ["Revisión del engineering.json"],
-      "prediction": "Esperaba que la decisión documentada cubriera el problema de concurrencia offline",
-      "command": "cat evidence/week-01/engineering.json",
-      "observedResult": "El archivo JSON es válido y contiene la mitigación del riesgo offline",
-      "explanation": "La arquitectura basada en intenciones es válida según los requisitos de CampusOps."
-    },
-    {
       "studentId": "Cesar",
       "commitShas": ["73e2dd22a707b9a6e20ae540f96661ec550cb10a"],
       "files": ["reports/week-01/baseline.json"],
@@ -35,6 +25,24 @@
       "command": "make feedback",
       "observedResult": "Todos los tests pasaron exitosamente",
       "explanation": "El proyecto original funciona correctamente tras la corrección de la falla."
+    },
+    {
+      "studentId": "3522110551",
+      "commitShas": ["e38e6a1de0da8b6cb8e3d636faea11429ef53402"],
+      "files": [
+        "reports/week-01/baseline.json",
+        "evidence/week-01/engineering.json"
+      ],
+      "tests": [
+        "npm --cache .npm-cache run test:smoke"
+      ],
+      "reviews": [
+        "Reproduccion y diagnostico de la falla controlada en App.tsx sin modificar course-tests/smoke.test.tsx"
+      ],
+      "prediction": "La prueba debia fallar si el estado exitoso del backend se establecia temporalmente como offline, porque el smoke test espera que la interfaz muestre available.",
+      "command": "npm --cache .npm-cache run test:smoke",
+      "observedResult": "Primera ejecucion: FAIL. La prueba esperaba 'available' y recibio 'Backend: offline'. Despues de restaurar setStatus('available') en App.tsx, se ejecuto nuevamente el mismo comando y resulto PASS: 1 test suite passed y 1 test passed.",
+      "explanation": "Se reprodujo una falla controlada y reversible modificando temporalmente el estado exitoso del backend de available a offline. El sintoma fue que el smoke test recibio Backend: offline. La causa fue el cambio temporal en el callback then() de App.tsx. Se corrigio restaurando setStatus('available') y se verifico la correccion ejecutando exactamente el mismo comando. No se modifico la prueba."
     }
   ]
 }

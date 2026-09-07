@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "week": 1,
-  "commitSha": "b5bcd2e852738cc7bd5d4b549207fbaaea15c104",
-  "generatedAt": "2026-09-05T15:49:00-06:00",
+  "commitSha": "5f9c508c3c0f6d6eef6f5d050801802b7c4f07f7",
+  "generatedAt": "2026-09-06T23:16:28.9187767-06:00",
   "checks": [
     {
       "id": "falla-controlada",
       "status": "fail",
       "scenarioType": "failure",
-      "command": "npm run test:smoke",
-      "evidence": "La prueba falló con el mensaje 'Unable to find an element with text: CampusOps'. El síntoma observado fue que la prueba no pudo pasar la aserción visual. La causa identificada fue que modificamos intencionalmente el código de App.tsx para que renderizara el texto 'CampusError' en lugar de 'CampusOps'."
+      "command": "npm --cache .npm-cache run test:smoke",
+      "evidence": "La prueba fallo porque App.tsx establecia temporalmente el estado exitoso del backend como offline. El test esperaba la cadena 'available' y recibio 'Backend: offline'. La causa fue el cambio controlado de setStatus('available') a setStatus('offline') en el callback then()."
     },
     {
       "id": "correccion-verificada",
       "status": "pass",
       "scenarioType": "nominal",
-      "command": "npm run test:smoke",
-      "evidence": "La prueba se ejecutó y pasó exitosamente ('renders the reproducible baseline and resolves backend state'). Comprobamos que el resultado observable fue una ejecución sin errores tras corregir la causa restaurando el texto original 'CampusOps' en la interfaz."
+      "command": "npm --cache .npm-cache run test:smoke",
+      "evidence": "Se restauro setStatus('available') en App.tsx y se ejecuto nuevamente exactamente el mismo comando. El resultado fue PASS: 1 test suite passed y 1 test passed."
     }
   ]
 }
