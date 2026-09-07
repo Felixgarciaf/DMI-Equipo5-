@@ -1,41 +1,40 @@
 {
-  "_instructions": "Eliminen este campo cuando terminen. Conserven exactamente tres integrantes y usen SHA Git completos de commits creados por cada persona.",
   "schemaVersion": 1,
   "week": 1,
-  "teamId": "REEMPLAZAR_CON_ID_DEL_EQUIPO",
+  "teamId": "Equipo5",
   "members": [
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_1",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
-      "tests": [],
-      "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "studentId": "a3523110172",
+      "commitShas": ["6ff5091311518bae16d8d0d8110cb1dd0c48e029"],
+      "files": ["docs/problem-definition.md", "docs/risk-register.md"],
+      "tests": ["npm --cache .npm-cache test -- --ci --runInBand course-tests/public/week-01.test.ts"],
+      "reviews": ["Revision del diff del commit 6ff5091311518bae16d8d0d8110cb1dd0c48e029"],
+      "prediction": "La prueba publica de semana 1 debia pasar porque la definicion del problema contiene actores y el registro de riesgos contiene probabilidad, impacto y mitigacion.",
+      "command": "npm --cache .npm-cache test -- --ci --runInBand course-tests/public/week-01.test.ts",
+      "observedResult": "PASS course-tests/public/week-01.test.ts; 1 test suite passed y 1 test passed.",
+      "explanation": "Se completo la definicion del problema de CampusOps con problema, alcance, actores, flujo principal y criterios observables. Tambien se priorizaron tres riesgos tecnicos, destacando la reasignacion concurrente offline como riesgo principal por su impacto en integridad de datos."
     },
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_2",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
-      "tests": [],
-      "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "studentId": "a3522110305",
+      "commitShas": ["6ff5091311518bae16d8d0d8110cb1dd0c48e029"],
+      "files": ["docs/problem-definition.md"],
+      "tests": ["npm --cache .npm-cache run test:smoke"],
+      "reviews": ["Revision tecnica del flujo principal y de los criterios de aceptacion en docs/problem-definition.md"],
+      "prediction": "El smoke test debia renderizar la linea base y resolver el estado del backend sin modificar las pruebas publicas.",
+      "command": "npm --cache .npm-cache run test:smoke",
+      "observedResult": "PASS course-tests/smoke.test.tsx; 1 test suite passed y 1 test passed.",
+      "explanation": "La revision tecnica confirmo que el flujo reportar-asignar-atender-cerrar queda conectado con actores claros y con criterios verificables, especialmente el caso offline con sincronizacion y conflicto de reasignacion."
     },
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_3",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
+      "studentId": "pendiente-matricula-integrante-3",
+      "commitShas": ["6ff5091311518bae16d8d0d8110cb1dd0c48e029"],
+      "files": ["docs/risk-register.md"],
       "tests": [],
-      "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "reviews": ["Revision tecnica de priorizacion de riesgos en docs/risk-register.md"],
+      "prediction": "El registro de riesgos debia conservar exactamente tres riesgos y explicar probabilidad, impacto, mitigacion y forma de comprobacion para cada uno.",
+      "command": "git show --format= -- docs/risk-register.md",
+      "observedResult": "El diff muestra tres riesgos ordenados por prioridad: conflicto de reasignacion offline, perdida de cambios no sincronizados y falla del servicio de geocodificacion.",
+      "explanation": "La revision tecnica valido que los riesgos estan relacionados con decisiones futuras de arquitectura movil: cola persistente offline, deteccion de conflictos y tolerancia a fallas de servicios externos."
     }
   ]
 }
