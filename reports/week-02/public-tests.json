@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "week": 2,
+  "mode": "public",
+  "commitSha": "02b91bad3f3f451b3ce943f4c7224f7641730ed4",
+  "evaluatedAt": "2026-09-13T02:21:27.611766+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "id": "base_files",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "id": "react_native_profile",
+      "status": "pass",
+      "detail": "missing packages=[]"
+    },
+    {
+      "id": "toolchain_scripts",
+      "status": "pass",
+      "detail": "missing scripts=[]"
+    },
+    {
+      "id": "workflow_integrity",
+      "status": "pass",
+      "detail": "bypass markers=[]"
+    },
+    {
+      "id": "secret_scan",
+      "status": "pass",
+      "detail": "hits=[]"
+    },
+    {
+      "id": "required_evidence",
+      "status": "pass",
+      "detail": "missing/empty=[]"
+    },
+    {
+      "id": "schema:reports/week-02/dependencies.json",
+      "status": "pass",
+      "detail": "4 checks indexed, 2 boundary/failure; report evaluates HEAD"
+    },
+    {
+      "id": "schema:evidence/week-02/engineering.json",
+      "status": "pass",
+      "detail": "decision evidence is substantive and reproducible; report evaluates HEAD"
+    },
+    {
+      "id": "schema:evidence/week-02/individual.json",
+      "status": "pass",
+      "detail": "three individual evidence records found"
+    }
+  ]
+}

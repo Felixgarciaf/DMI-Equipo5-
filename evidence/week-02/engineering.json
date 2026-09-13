@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "week": 2,
+  "commitSha": "02b91bad3f3f451b3ce943f4c7224f7641730ed4",
+  "decision": "Separar CampusOps en UI, application, domain e infrastructure, usando puertos del dominio para incidencias y dejando sesion, persistencia y ubicacion como limites previstos sin implementacion real esta semana.",
+  "alternatives": [
+    "Pantallas con acceso directo a un arreglo en memoria o a proveedores concretos, con menor numero de archivos iniciales pero alto acoplamiento UI-infraestructura.",
+    "Arquitectura por limites UI -> application -> domain <- infrastructure, con IncidentRepository como puerto sustituible e infraestructura fake determinista en memoria."
+  ],
+  "tradeoff": "La decision aumenta la complejidad inicial porque agrega carpetas, puertos y una composicion raiz, pero mejora la facilidad de prueba y baja el costo de cambiar el proveedor de datos: el fake en memoria puede reemplazarse por HTTP, SQLite o un SDK sin reescribir las pantallas.",
+  "requirementIds": ["AC-02", "AC-03", "AC-04"],
+  "verification": [
+    {
+      "command": "node tools/check-architecture-boundaries.mjs",
+      "result": "pass",
+      "evidence": "El check final reporto status=pass, checkedFiles=10 y violations=[]."
+    },
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "result": "pass",
+      "evidence": "La prueba publica de Semana 02 paso y valido que el ADR/diagrama exponen limites sin una arista directa UI->infrastructure."
+    },
+    {
+      "command": "npm run test:smoke",
+      "result": "pass",
+      "evidence": "El smoke test paso con la app renderizando CampusOps y el estado del backend controlado."
+    }
+  ]
+}
+

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "week": 2,
+  "teamId": "Equipo5",
+  "members": [
+    {
+      "studentId": "a3522110305",
+      "commitShas": ["02b91bad3f3f451b3ce943f4c7224f7641730ed4"],
+      "files": [
+        "App.tsx",
+        "src/campusops/ui/IncidentExplorerScreen.tsx",
+        "src/campusops/application/incidentQueries.ts",
+        "tools/check-architecture-boundaries.mjs"
+      ],
+      "tests": [
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test:smoke",
+        "node tools/check-architecture-boundaries.mjs"
+      ],
+      "reviews": [
+        "Revision del antes/despues de AC-03: BoundaryViolationProbe.ts produjo ui_to_infrastructure y despues el check quedo sin violaciones."
+      ],
+      "prediction": "La UI debia poder mostrar lista y detalle sin importar infraestructura, y el check de arquitectura debia fallar ante un import directo UI->infrastructure.",
+      "command": "node tools/check-architecture-boundaries.mjs",
+      "observedResult": "El check fallo durante la prueba controlada con rule=ui_to_infrastructure y luego paso en el estado final con violations=[].",
+      "explanation": "Se construyo el esqueleto ejecutable de Semana 02 con lista/detalle y se agrego un check de imports que protege el limite UI -> application -> domain <- infrastructure."
+    },
+    {
+      "studentId": "a3523110172",
+      "commitShas": ["02b91bad3f3f451b3ce943f4c7224f7641730ed4"],
+      "files": [
+        "docs/adr/ADR-001-architecture.md",
+        "docs/architecture.mmd",
+        "src/campusops/domain/ports.ts"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand course-tests/public/week-02.test.ts"
+      ],
+      "reviews": [
+        "Revision de coherencia entre ADR, Mermaid y puertos de dominio para incidencias, sesion, persistencia y ubicacion."
+      ],
+      "prediction": "La prueba publica debia detectar los cuatro limites en el diagrama y confirmar que no existiera una arista directa UI->infrastructure.",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "observedResult": "PASS course-tests/public/week-02.test.ts; 1 test suite passed y 1 test passed.",
+      "explanation": "La revision conecto la decision de arquitectura con el diagrama y con los contratos del dominio, dejando los proveedores futuros representados como puertos sustituibles."
+    },
+    {
+      "studentId": "pendiente-matricula-integrante-3",
+      "commitShas": ["02b91bad3f3f451b3ce943f4c7224f7641730ed4"],
+      "files": [
+        "src/campusops/infrastructure/inMemoryIncidentRepository.ts",
+        "reports/week-02/dependencies.json",
+        "evidence/week-02/engineering.json"
+      ],
+      "tests": [],
+      "reviews": [
+        "Revision tecnica del fake determinista en memoria y de la evidencia AC-03 registrada en dependencies.json."
+      ],
+      "prediction": "El fake de infraestructura debia satisfacer IncidentRepository sin que el dominio importara infraestructura ni la UI conociera el proveedor concreto.",
+      "command": "git show --stat --name-only 02b91bad3f3f451b3ce943f4c7224f7641730ed4",
+      "observedResult": "El commit incluye el repositorio en memoria, los puertos de dominio, la UI de lista/detalle, el ADR, el diagrama y el check de arquitectura.",
+      "explanation": "La revision valida que la infraestructura fake queda aislada detras del puerto IncidentRepository y que la evidencia conserva tanto el fallo controlado como el estado corregido."
+    }
+  ]
+}
+
