@@ -11,3 +11,6 @@ dist/
 *.p8
 *.p12
 reports/**/generated-*
+
+dmi.md
+SKILL.md

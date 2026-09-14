@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "week": 2,
+  "commitSha": "02b91bad3f3f451b3ce943f4c7224f7641730ed4",
+  "generatedAt": "2026-09-13T02:16:51.096Z",
+  "checks": [
+    {
+      "id": "architecture-boundary-before",
+      "status": "fail",
+      "scenarioType": "failure",
+      "command": "node tools/check-architecture-boundaries.mjs",
+      "evidence": "Antes de corregir AC-03 se agrego temporalmente src/campusops/ui/BoundaryViolationProbe.ts con un import directo a ../infrastructure/inMemoryIncidentRepository. El check fallo con rule=ui_to_infrastructure y el mensaje UI must not import infrastructure directly."
+    },
+    {
+      "id": "architecture-boundary-after",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "node tools/check-architecture-boundaries.mjs",
+      "evidence": "Despues de retirar la importacion UI->infrastructure, el resultado fue status=pass, checkedFiles=10 y violations=[]."
+    },
+    {
+      "id": "week-02-public-test",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "evidence": "PASS course-tests/public/week-02.test.ts; la prueba encontro UI, application, domain e infrastructure en docs/architecture.mmd, no encontro flecha UI->infrastructure y el ADR contiene alternativas y consecuencias/trade-off."
+    },
+    {
+      "id": "smoke-list-detail",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run test:smoke",
+      "evidence": "PASS course-tests/smoke.test.tsx; la app renderizo CampusOps y resolvio Backend: available con el mock del backend."
+    }
+  ]
+}
+
