@@ -1,0 +1,51 @@
+flowchart TD
+  subgraph Profiles["Perfiles de usuario"]
+    Reporter["Reportante"]
+    Technician["Técnico"]
+    Coordinator["Coordinador"]
+  end
+
+  subgraph UI["UI"]
+    App["App.tsx"]
+    IncidentExplorer["IncidentExplorerScreen\nlista y detalle"]
+  end
+
+  subgraph Application["application"]
+    IncidentQueries["createIncidentQueries\ncasos de uso de incidencias"]
+  end
+
+  subgraph Domain["domain"]
+    IncidentModel["IncidentListItem / IncidentDetail"]
+    IncidentPort["IncidentRepository"]
+    SessionBoundary["SessionBoundary\nprevisto"]
+    PersistenceBoundary["IncidentPersistencePort\nprevisto"]
+    LocationBoundary["LocationProviderPort\nprevisto"]
+  end
+
+  subgraph Infrastructure["infrastructure"]
+    MemoryRepo["InMemoryIncidentRepository\nfake determinista"]
+    FutureSession["Proveedor de sesión futuro"]
+    FutureStorage["Almacenamiento futuro"]
+    FutureLocation["Proveedor de ubicación futuro"]
+  end
+
+  subgraph Composition["composition root"]
+    Bootstrap["bootstrap.ts"]
+  end
+
+  Reporter --> IncidentExplorer
+  Technician --> IncidentExplorer
+  Coordinator --> IncidentExplorer
+
+  App --> IncidentExplorer
+  IncidentExplorer --> IncidentQueries
+  IncidentQueries --> IncidentPort
+  IncidentPort --> IncidentModel
+
+  MemoryRepo -. implementa .-> IncidentPort
+  FutureSession -. implementa .-> SessionBoundary
+  FutureStorage -. implementa .-> PersistenceBoundary
+  FutureLocation -. implementa .-> LocationBoundary
+
+  Bootstrap --> IncidentQueries
+  Bootstrap --> MemoryRepo
