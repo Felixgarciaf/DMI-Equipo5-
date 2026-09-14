@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 2,
-  "commitSha": "0d5dabe1b94ab9e56234c9e574493bba072163f1",
+  "commitSha": "bea0b6aca5973c367cb700266ac4447df8a374d8",
   "decision": "Separar CampusOps en UI, application, domain e infrastructure, usando puertos del dominio para incidencias y dejando sesion, persistencia y ubicacion como limites previstos sin implementacion real esta semana.",
   "alternatives": [
     "Pantallas con acceso directo a un arreglo en memoria o a proveedores concretos, con menor numero de archivos iniciales pero alto acoplamiento UI-infraestructura.",
