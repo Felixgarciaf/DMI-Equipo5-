@@ -29,6 +29,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 2
 
+      - name: Fetch final tag
+        if: startsWith(github.ref, 'refs/tags/week-02-final')
+        run: git fetch origin refs/tags/week-02-final:refs/tags/week-02-final
+
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
