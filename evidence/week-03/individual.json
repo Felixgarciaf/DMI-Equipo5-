@@ -1,4 +1,6 @@
-﻿{
+{
+  "schemaVersion": 1,
+  "week": 3,
   "teamId": "Equipo5",
   "members": [
     {
@@ -20,6 +22,28 @@
       "command": "make verify",
       "observedResult": "PASS - Los tres comandos locales (typecheck, lint, test:smoke) se ejecutaron sin errores.",
       "explanation": "Modifique el workflow de GitHub Actions para agregar los pasos obligatorios (typecheck, lint, test, secret scanning con gitleaks)."
+    },
+    {
+      "studentId": "a3522110305",
+      "commitShas": [
+        "3d16b6e2a66e9519dd602c6fefbca681dc37f449"
+      ],
+      "files": [
+        "docs/threat-model.md",
+        "src/security/incidentAccessPolicy.ts",
+        "tests/security/incidentAccessPolicy.test.ts"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand tests/security/incidentAccessPolicy.test.ts"
+      ],
+      "reviews": [
+        "Revise que el modelo cubra la cadena Activo -> Amenaza -> Control -> Verificacion -> Riesgo residual para las cuatro amenazas requeridas."
+      ],
+      "prediction": "La prueba de seguridad debe bloquear que reporter-2 consulte una incidencia creada por reporter-1 y permitir acceso al propietario, tecnico asignado y coordinador.",
+      "command": "npm test -- --ci --runInBand tests/security/incidentAccessPolicy.test.ts",
+      "observedResult": "PASS tests/security/incidentAccessPolicy.test.ts; 2 tests passed, 1 test suite passed.",
+      "explanation": "Documente el modelo de amenazas y agregue una politica verificable de lectura de incidencias. El control reduce el riesgo de consultar incidencias ajenas porque centraliza la decision de acceso por rol y relacion del actor con la incidencia antes de entregar el detalle."
     }
   ]
 }
+
