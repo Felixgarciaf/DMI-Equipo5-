@@ -28,6 +28,14 @@ jobs:
           cache: npm
       - name: Reproducible setup
         run: make setup
+      - name: Secret scanning
+        uses: zricethezav/gitleaks-action@v2
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Tests
+        run: npm run test:smoke
       - name: Public Expo Android build
         run: npm run bundle:release
       - name: AC-01 — reproducibility
