@@ -1,0 +1,25 @@
+﻿{
+  "teamId": "Equipo5",
+  "members": [
+    {
+      "studentId": "a3523110172",
+      "commitShas": [
+        "8f78a694774fe65ff2cda645613aadb8ebf83c55",
+        "72f798d499a756bd83eecbfc4b0a3623b8ab00da"
+      ],
+      "files": [
+        ".github/workflows/week-03-ci-amenazas-feedback.yml"
+      ],
+      "tests": [
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test:smoke"
+      ],
+      "reviews": [],
+      "prediction": "Los chequeos de integracion continua pasaran correctamente y bloquearan el pipeline si hay errores.",
+      "command": "make verify",
+      "observedResult": "PASS - Los tres comandos locales (typecheck, lint, test:smoke) se ejecutaron sin errores.",
+      "explanation": "Modifique el workflow de GitHub Actions para agregar los pasos obligatorios (typecheck, lint, test, secret scanning con gitleaks)."
+    }
+  ]
+}
