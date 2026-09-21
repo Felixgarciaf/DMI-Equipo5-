@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "week": 3,
+  "mode": "public",
+  "commitSha": "4b830dc2e0c3373b162e0b0a32e3353a8792c5fb",
+  "evaluatedAt": "2026-09-21T07:49:05.473639+00:00",
+  "status": "fail",
+  "checks": [
+    {
+      "id": "base_files",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "id": "react_native_profile",
+      "status": "pass",
+      "detail": "missing packages=[]"
+    },
+    {
+      "id": "toolchain_scripts",
+      "status": "pass",
+      "detail": "missing scripts=[]"
+    },
+    {
+      "id": "workflow_integrity",
+      "status": "pass",
+      "detail": "bypass markers=[]"
+    },
+    {
+      "id": "secret_scan",
+      "status": "pass",
+      "detail": "hits=[]"
+    },
+    {
+      "id": "required_evidence",
+      "status": "fail",
+      "detail": "missing/empty=['reports/week-03/security.json', 'evidence/week-03/engineering.json']"
+    },
+    {
+      "id": "schema:evidence/week-03/individual.json",
+      "status": "fail",
+      "detail": "week must match and members must contain exactly three entries"
+    },
+    {
+      "id": "toolchain_1",
+      "status": "fail",
+      "detail": "npm run typecheck\n[WinError 2] El sistema no puede encontrar el archivo especificado"
+    },
+    {
+      "id": "toolchain_2",
+      "status": "fail",
+      "detail": "npm run lint\n[WinError 2] El sistema no puede encontrar el archivo especificado"
+    },
+    {
+      "id": "toolchain_3",
+      "status": "fail",
+      "detail": "npm run audit:ci\n[WinError 2] El sistema no puede encontrar el archivo especificado"
+    },
+    {
+      "id": "toolchain_4",
+      "status": "fail",
+      "detail": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts\n[WinError 2] El sistema no puede encontrar el archivo especificado"
+    }
+  ]
+}

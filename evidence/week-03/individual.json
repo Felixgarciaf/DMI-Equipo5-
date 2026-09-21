@@ -43,6 +43,30 @@
       "command": "npm test -- --ci --runInBand tests/security/incidentAccessPolicy.test.ts",
       "observedResult": "PASS tests/security/incidentAccessPolicy.test.ts; 2 tests passed, 1 test suite passed.",
       "explanation": "Documente el modelo de amenazas y agregue una politica verificable de lectura de incidencias. El control reduce el riesgo de consultar incidencias ajenas porque centraliza la decision de acceso por rol y relacion del actor con la incidencia antes de entregar el detalle."
-    }
+    },
+    {
+      "studentId": "a3522120551",
+      "commitShas": [
+        "4b830dc2e0c3373b162e0b0a32e3353a8792c5fb"
+      ],
+      "files": [
+        "reports/week-03/security.json",
+        "evidence/week-03/engineering.json",
+        "evidence/week-03/individual.json"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand tests/security/incidentAccessPolicy.test.ts",
+        "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test:smoke"
+      ],
+      "reviews": [
+        "Integre los resultados observables de las comprobaciones de Semana 3 y diferencie los fallos reales del proyecto de la limitacion WinError 2 del evaluador local en Windows."
+      ],
+      "prediction": "Las pruebas directas de seguridad y comportamiento publico deben pasar y la evidencia debe conservar los fallos observables sin ocultarlos.",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+      "observedResult": "PASS - 2 tests pasaron en 1 suite; workflow y modelo de amenazas cumplieron las comprobaciones publicas.",
+      "explanation": "Integre la evidencia tecnica de Semana 3, documente los resultados reales de las pruebas y prepare los entregables reproducibles de seguridad e ingenieria. El aporte queda identificado mediante el commit de integracion 4b830dc2e0c3373b162e0b0a32e3353a8792c5fb."    }
   ]
 }

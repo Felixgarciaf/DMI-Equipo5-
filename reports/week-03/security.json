@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "week": 3,
+  "commitSha": "4b830dc2e0c3373b162e0b0a32e3353a8792c5fb",
+  "generatedAt": "2026-09-21T16:47:10-06:00",
+  "checks": [
+    {
+      "id": "typecheck",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run typecheck",
+      "evidence": "Comando ejecutado directamente en Windows; TypeScript finalizó sin errores."
+    },
+    {
+      "id": "lint",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run lint",
+      "evidence": "ESLint finalizó sin errores."
+    },
+    {
+      "id": "smoke_tests",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run test:smoke",
+      "evidence": "1 test suite y 1 test pasaron."
+    },
+    {
+      "id": "incident_access_control",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand tests/security/incidentAccessPolicy.test.ts",
+      "evidence": "2 tests pasaron: un reporter no puede leer la incidencia de otro reporter y propietario, técnico asignado y coordinador sí pueden acceder."
+    },
+    {
+      "id": "public_week_03",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+      "evidence": "2 tests pasaron: el workflow conserva comprobaciones críticas y mínimo privilegio, y el modelo relaciona activos, amenazas, controles y verificación."
+    },
+    {
+      "id": "audit_ci",
+      "status": "fail",
+      "scenarioType": "failure",
+      "command": "npm run audit:ci",
+      "evidence": "npm audit --omit=dev --audit-level=critical reportó 2 vulnerabilidades de severidad alta: @xmldom/xmldom y js-yaml."
+    },
+    {
+      "id": "evaluator_windows_subprocess",
+      "status": "fail",
+      "scenarioType": "failure",
+      "command": "make verify-week-03",
+      "evidence": "El evaluador reportó WinError 2 al intentar ejecutar npm desde Python. Las mismas comprobaciones ejecutadas directamente con npm sí produjeron resultados observables."
+    },
+    {
+      "id": "secret_scan",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "make verify-week-03",
+      "evidence": "El evaluador reportó secret_scan con hits=[] y workflow_integrity con bypass markers=[] en el commit evaluado."
+    },
+    {
+      "id": "least_privilege_violation",
+      "status": "fail",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+      "evidence": "Se modificó temporalmente permissions.contents de read a write para demostrar una violación de mínimo privilegio. La prueba falló con 1 test fallido y 1 pasado; Jest indicó que esperaba contents: read y recibió contents: write."
+    },
+    {
+      "id": "least_privilege_restored",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+      "evidence": "Después de restaurar permissions.contents a read, los 2 tests pasaron en 1 suite. La comprobación de mínimo privilegio y el modelo de amenazas quedaron nuevamente en PASS."
+    }
+  ]
+}

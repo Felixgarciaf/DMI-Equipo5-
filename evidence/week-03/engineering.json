@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "week": 3,
+  "commitSha": "4b830dc2e0c3373b162e0b0a32e3353a8792c5fb",
+  "decision": "Priorizar el riesgo de consultar incidencias ajenas y reducirlo mediante una política centralizada de autorización verificable antes de entregar el detalle de una incidencia.",
+  "alternatives": [
+    "Implementar primero controles de modificación de asignaciones mediante autorización por rol y validación del caso de uso.",
+    "Priorizar la prevención de filtración de información en logs mediante sanitización y exclusión de secretos y payloads completos.",
+    "Priorizar la detección de credenciales expuestas mediante secret scanning y permisos mínimos en GitHub Actions."
+  ],
+  "tradeoff": "Beneficio: priorizar este riesgo protege primero la confidencialidad de las incidencias. La política centralizada concentra la decisión de acceso en un punto verificable y permite probar accesos denegados y permitidos. La prueba demuestra que un reporter no puede consultar una incidencia de otro reporter y que los roles autorizados mantienen el acceso. Costo: mantener esta política requiere conservar actualizadas las reglas de roles y relaciones entre usuarios e incidencias. En esta etapa no sustituye la autenticación y autorización completas de una API real, por lo que permanece un riesgo residual durante la futura integración con endpoints, sesiones y almacenamiento reales.",
+  "requirementIds": [
+    "AC-01",
+    "AC-02",
+    "AC-03",
+    "AC-04",
+    "AC-05"
+  ],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand tests/security/incidentAccessPolicy.test.ts",
+      "result": "PASS",
+      "evidence": "2 tests pasaron; el acceso de un reporter a una incidencia ajena fue bloqueado y los accesos permitidos fueron verificados."
+    },
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+      "result": "PASS",
+      "evidence": "2 tests pasaron; se verificaron las comprobaciones críticas del workflow y la relación entre activos, amenazas, controles y verificación."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS",
+      "evidence": "TypeScript terminó sin errores."
+    },
+    {
+      "command": "npm run lint",
+      "result": "PASS",
+      "evidence": "ESLint terminó sin errores."
+    },
+    {
+      "command": "npm run test:smoke",
+      "result": "PASS",
+      "evidence": "1 suite y 1 test pasaron."
+    },
+    {
+      "command": "npm run audit:ci",
+      "result": "FAIL",
+      "evidence": "La auditoría reportó 2 vulnerabilidades altas en @xmldom/xmldom y js-yaml."
+    }
+  ]
+}
