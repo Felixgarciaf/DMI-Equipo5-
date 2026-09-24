@@ -3,7 +3,7 @@
 **Estudiante:** Felix Ivan Garcia Flores  
 **Proyecto:** CampusOps — Starter Móvil DMI  
 **Repositorio:** https://github.com/Felixgarciaf/DMI-Equipo5-  
-**Rama de trabajo:** `week4/security-audit-felix-ivan-garcia-flores`  
+**Rama de trabajo:** `felix/week-04-security-audit`  
 
 ---
 
