@@ -1,0 +1,8 @@
+diff --git a/.env.example b/.env.example
+index 7831fa9..1828cc9 100644
+--- a/.env.example
++++ b/.env.example
+@@ -1 +1,2 @@
+-EXPO_PUBLIC_COURSE_BACKEND_URL=http://127.0.0.1:4310
++EXPO_PUBLIC_COURSE_BACKEND_URL=
++COURSE_ALLOWED_ORIGIN=

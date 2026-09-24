@@ -1,0 +1,10 @@
+ M .env.example
+ M course-backend/README.md
+ M course-backend/self-test.mjs
+ M course-backend/server.mjs
+ M src/course-evaluation/index.ts
+?? SKILL.md
+?? dmi.md
+?? docs/evidence/
+?? docs/security-audit.md
+?? reports/week-02/

@@ -34,7 +34,9 @@ try {
     headers: { Authorization: 'Bearer course-valid-token', 'X-Course-Scenario': 'nullable' },
   });
   if (resources.items[0].payload !== null) throw new Error('nullable scenario mismatch');
-  const action = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': 'self-test-operation' }, body: JSON.stringify({ resourceId: 'resource-1' }) };
+  const unauthenticatedAction = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': 'self-test-operation' }, body: JSON.stringify({ resourceId: 'resource-1' }) };
+  const action = { ...unauthenticatedAction, headers: { ...unauthenticatedAction.headers, Authorization: 'Bearer course-valid-token' } };
+  await expectStatus('/v1/resources/action', 401, unauthenticatedAction);
   await expectStatus('/v1/resources/action', 201, action);
   const replay = await expectStatus('/v1/resources/action', 200, action);
   if (replay.duplicate !== true) throw new Error('idempotency replay mismatch');
