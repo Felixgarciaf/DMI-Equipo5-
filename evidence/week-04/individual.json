@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "week": 4,
+  "teamId": "Equipo5",
+  "members": [
+    {
+      "studentId": "a3522110305",
+      "commitShas": [
+        "bb371004970a65ba464727966cd06b48189baccc"
+      ],
+      "files": [
+        "src/campusops/telemetry/redactForTelemetry.ts",
+        "src/course-evaluation/index.ts",
+        "tests/security/redactForTelemetry.test.ts"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand tests/security/redactForTelemetry.test.ts course-tests/public/week-04.test.ts",
+        "npm run typecheck",
+        "npx eslint src/course-evaluation/index.ts src/campusops/telemetry/redactForTelemetry.ts tests/security/redactForTelemetry.test.ts"
+      ],
+      "reviews": [
+        "Revise docs/CAMPUSOPS_API.md y Parte_2_Cesar_RedactForTelemetry.pdf para usar la lista de campos sensibles oficial, no una lista inventada."
+      ],
+      "prediction": "La sanitizacion debe redactar campos sensibles en objetos planos, objetos anidados y listas, conservar contexto tecnico como incidentId y correlationId, y no modificar el objeto original.",
+      "command": "npm test -- --ci --runInBand tests/security/redactForTelemetry.test.ts course-tests/public/week-04.test.ts",
+      "observedResult": "PASS tests/security/redactForTelemetry.test.ts y PASS course-tests/public/week-04.test.ts; 2 test suites passed, 6 tests passed.",
+      "explanation": "Implemente redactForTelemetry como logica real de CampusOps en src/campusops/telemetry/redactForTelemetry.ts y deje src/course-evaluation/index.ts como adaptador. La funcion normaliza claves quitando guiones y guiones bajos, redacta el valor completo de campos sensibles aunque sean arreglos, recorre objetos y listas no sensibles, preserva campos tecnicos seguros y devuelve una estructura nueva sin mutar la entrada."
+    }
+  ]
+}
