@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "week": 4,
+  "teamId": "Equipo5",
+  "members": [
+    {
+      "studentId": "a3522110305",
+      "commitShas": [
+        "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9"
+      ],
+      "files": [
+        "src/security/secureStorage.ts",
+        "src/security/safeErrorHandler.ts",
+        "tests/security/secureStorage.test.ts",
+        "tests/security/safeErrorHandler.test.ts",
+        "docs/security-controls.md"
+      ],
+      "tests": [
+        "npx jest tests/security/secureStorage.test.ts",
+        "npx jest tests/security/safeErrorHandler.test.ts"
+      ],
+      "reviews": [
+        "Revisión de mecanismos de almacenamiento cifrado y eliminación de fuga de tokens en el manejo de excepciones."
+      ],
+      "prediction": "El almacenamiento seguro evitará guardar tokens en texto plano y formatSafeError eliminará datos sensibles de las trazas de error.",
+      "command": "npx jest tests/security/",
+      "observedResult": "PASS - 3 test suites pasadas exitosamente (incidentAccessPolicy, safeErrorHandler, secureStorage).",
+      "explanation": "Implementé el módulo SecurityStorageService para diferenciar almacenamiento sensible cifrado de preferencias públicas, y el manejador formatSafeError para evitar filtración de tokens y datos personales en errores."
+    },
+    {
+      "studentId": "a3523110172",
+      "commitShas": [
+        "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9"
+      ],
+      "files": [
+        "src/course-evaluation/index.ts"
+      ],
+      "tests": [
+        "npx jest course-tests/public/week-04.test.ts"
+      ],
+      "reviews": [
+        "Verificación de la función redactForTelemetry contra objetos y estructuras anidadas."
+      ],
+      "prediction": "redactForTelemetry reemplazará todas las propiedades sensibles listadas en el contrato público por [REDACTED].",
+      "command": "npx jest course-tests/public/week-04.test.ts",
+      "observedResult": "PASS - 1 test pasó exitosamente.",
+      "explanation": "Comprobé y validé la lógica de redactForTelemetry para asegurar que respete el contrato de la API en arreglos y objetos anidados."
+    },
+    {
+      "studentId": "a3522120551",
+      "commitShas": [
+        "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9"
+      ],
+      "files": [
+        "reports/week-04/secret-scan.json",
+        "reports/week-04/negative-tests.json"
+      ],
+      "tests": [
+        "npx jest course-tests/public/week-04.test.ts"
+      ],
+      "reviews": [
+        "Auditoría y escaneo de secretos en archivos entregados y generación de reportes JSON."
+      ],
+      "prediction": "No se encontrarán secretos en el código fuente y las pruebas negativas confirmarán que la información sensible no se expone.",
+      "command": "npx jest course-tests/public/week-04.test.ts",
+      "observedResult": "PASS - Escaneo de secretos y pruebas negativas completados sin hallazgos de vulnerabilidades.",
+      "explanation": "Generé los reportes de secret-scan y negative-tests validando que el repositorio cumpla con los estándares de seguridad."
+    }
+  ]
+}

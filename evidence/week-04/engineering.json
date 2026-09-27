@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "week": 4,
+  "commitSha": "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9",
+  "decision": "Implementar un servicio de almacenamiento cifrado (SecurityStorageService) para datos de sesión/sensibles y sanitización obligatoria mediante redactForTelemetry y formatSafeError en logs y manejo de errores.",
+  "alternatives": [
+    "Almacenar todos los datos de la aplicación en texto plano utilizando AsyncStorage sin cifrado.",
+    "Desactivar la emisión de logs de error en producción sin sanitizar el contexto técnico."
+  ],
+  "tradeoff": "Beneficio: Cifrar el almacenamiento previene la extracción no autorizada de tokens y PII en reposo. La sanitización de logs evita la fuga de información sensible preservando el contexto técnico. Costo: Ligera sobrecarga en rendimiento al serializar/deserializar valores cifrados y filtrar objetos de error.",
+  "requirementIds": [
+    "AC-01",
+    "AC-02",
+    "AC-03",
+    "AC-04",
+    "AC-05"
+  ],
+  "verification": [
+    {
+      "command": "npx jest course-tests/public/week-04.test.ts",
+      "result": "PASS",
+      "evidence": "1 test pasó; redactForTelemetry sanitiza campos sensibles preservando contexto técnico."
+    },
+    {
+      "command": "npx jest tests/security/",
+      "result": "PASS",
+      "evidence": "3 suites y 9 pruebas pasaron; se comprobó el almacenamiento seguro y la sanitización de errores."
+    }
+  ]
+}
