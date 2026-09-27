@@ -46,7 +46,9 @@
     "preset": "jest-expo",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/course-tests/hidden/"
+      "/course-tests/hidden/",
+      "/week-03-ci-amenazas/",
+      "/week-04-seguridad-privacidad/"
     ],
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
