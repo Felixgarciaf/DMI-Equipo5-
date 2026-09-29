@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
   "week": 4,
-  "commitSha": "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9",
-  "decision": "Implementar un servicio de almacenamiento cifrado (SecurityStorageService) para datos de sesión/sensibles y sanitización obligatoria mediante redactForTelemetry y formatSafeError en logs y manejo de errores.",
+  "commitSha": "5e9d5cf6a473bb24e1ace3453f99a9fc603f4938",
+  "decision": "Implementar un servicio de almacenamiento cifrado (SecurityStorageService) para datos de sesión/sensibles y sanitización obligatoria mediante redactForTelemetry y formatSafeError en logs y manejo de errores. Como control adicional de autenticación, validar que la identidad del actor corresponda con el bearer token utilizado.",
   "alternatives": [
     "Almacenar todos los datos de la aplicación en texto plano utilizando AsyncStorage sin cifrado.",
-    "Desactivar la emisión de logs de error en producción sin sanitizar el contexto técnico."
+    "Desactivar la emisión de logs de error en producción sin sanitizar el contexto técnico.",
+    "Aceptar el actor declarado por la solicitud sin verificar que corresponda con la identidad asociada al bearer token."
   ],
-  "tradeoff": "Beneficio: Cifrar el almacenamiento previene la extracción no autorizada de tokens y PII en reposo. La sanitización de logs evita la fuga de información sensible preservando el contexto técnico. Costo: Ligera sobrecarga en rendimiento al serializar/deserializar valores cifrados y filtrar objetos de error.",
+  "tradeoff": "Beneficio: Cifrar el almacenamiento previene la extracción no autorizada de tokens y PII en reposo. La sanitización de logs evita la fuga de información sensible preservando el contexto técnico. La validación actor-token evita aceptar una identidad distinta de la asociada a la credencial presentada. Costo: Ligera sobrecarga en rendimiento al serializar/deserializar valores cifrados, filtrar objetos de error y validar la correspondencia entre actor y credencial.",
   "requirementIds": [
     "AC-01",
     "AC-02",
@@ -24,7 +25,12 @@
     {
       "command": "npx jest tests/security/",
       "result": "PASS",
-      "evidence": "3 suites y 9 pruebas pasaron; se comprobó el almacenamiento seguro y la sanitización de errores."
+      "evidence": "El subconjunto de seguridad pasó; se comprobó el almacenamiento seguro, el manejo seguro de errores y la sanitización de telemetría."
+    },
+    {
+      "command": "node course-backend/self-test.mjs",
+      "result": "PASS",
+      "evidence": "El self-test controlado del backend pasó, incluyendo la validación de que una combinación de actor y bearer token que no corresponde sea rechazada con 401."
     }
   ]
 }
