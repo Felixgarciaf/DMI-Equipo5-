@@ -47,24 +47,29 @@
       "explanation": "Comprobé y validé la lógica de redactForTelemetry para asegurar que respete el contrato de la API en arreglos y objetos anidados."
     },
     {
-      "studentId": "a3522120551",
-      "commitShas": [
-        "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9"
-      ],
-      "files": [
-        "reports/week-04/secret-scan.json",
-        "reports/week-04/negative-tests.json"
-      ],
-      "tests": [
-        "npx jest course-tests/public/week-04.test.ts"
-      ],
-      "reviews": [
-        "Auditoría y escaneo de secretos en archivos entregados y generación de reportes JSON."
-      ],
-      "prediction": "No se encontrarán secretos en el código fuente y las pruebas negativas confirmarán que la información sensible no se expone.",
-      "command": "npx jest course-tests/public/week-04.test.ts",
-      "observedResult": "PASS - Escaneo de secretos y pruebas negativas completados sin hallazgos de vulnerabilidades.",
-      "explanation": "Generé los reportes de secret-scan y negative-tests validando que el repositorio cumpla con los estándares de seguridad."
-    }
+  "studentId": "3522110551",
+  "commitShas": [
+    "5e9d5cf6a473bb24e1ace3453f99a9fc603f4938"
+  ],
+  "files": [
+    "reports/week-04/secret-scan.json",
+    "reports/week-04/negative-tests.json",
+    "course-backend/auth-fixture.mjs",
+    "course-backend/campusops.mjs",
+    "course-backend/campusops-self-test.mjs"
+  ],
+  "tests": [
+    "npx jest course-tests/public/week-04.test.ts",
+    "node course-backend/self-test.mjs"
+  ],
+  "reviews": [
+    "Auditoría y escaneo de secretos en archivos entregados y generación de reportes JSON.",
+    "Revisión del flujo de autenticación del backend CampusOps para verificar que la identidad declarada por X-Course-Actor corresponda al actor asociado al bearer token."
+  ],
+  "prediction": "No se encontrarán secretos en el código fuente y las pruebas negativas confirmarán que la información sensible no se expone. Además, un bearer token válido asociado a un actor no podrá utilizarse junto con la identidad de otro actor.",
+  "command": "node course-backend/self-test.mjs",
+  "observedResult": "PASS - CampusOps backend contracts: roles, reassignment conflict, lost response, idempotency, evidence and geocoding PASS. Controlled backend self-test passed.",
+  "explanation": "Generé los reportes de secret-scan y negative-tests y revisé los caminos de error relacionados con seguridad. Como corrección adicional, implementé un fixture de autenticación que asocia cada access token con un actor específico y modifiqué CampusOps para rechazar con 401 cuando el actor asociado al token no coincide con X-Course-Actor. El caso negativo fue incorporado al self-test y la comprobación completa del backend terminó correctamente."
+}
   ]
 }
