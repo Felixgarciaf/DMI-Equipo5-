@@ -1,10 +1,11 @@
 /**
- * Módulo de Almacenamiento Seguro — Semana 04 (Felix)
+ * Módulo de Almacenamiento Seguro — Semana 04
  *
- * Proporciona un mecanismo diferenciado para guardar datos sensibles (tokens de sesión,
- * credenciales, datos personales) utilizando almacenamiento cifrado / seguro,
- * mientras que las preferencias no sensibles utilizan almacenamiento estándar.
+ * Los datos sensibles utilizan expo-secure-store.
+ * Las preferencias no sensibles utilizan un almacenamiento separado.
  */
+
+import * as SecureStore from 'expo-secure-store';
 
 export interface StorageAdapter {
   getItem(key: string): Promise<string | null>;
@@ -12,6 +13,10 @@ export interface StorageAdapter {
   removeItem(key: string): Promise<void>;
 }
 
+/**
+ * Almacenamiento en memoria utilizado para datos no sensibles
+ * y para escenarios de prueba.
+ */
 class InMemoryStorage implements StorageAdapter {
   private store = new Map<string, string>();
 
@@ -28,34 +33,23 @@ class InMemoryStorage implements StorageAdapter {
   }
 }
 
-// Simulador de almacenamiento seguro con cifrado básico para entornos de desarrollo/test
-class EncryptedSecureStorage implements StorageAdapter {
-  private store = new Map<string, string>();
-
-  private obfuscate(value: string): string {
-    return Buffer.from(value, 'utf-8').toString('base64');
-  }
-
-  private deobfuscate(value: string): string {
-    return Buffer.from(value, 'base64').toString('utf-8');
-  }
-
+/**
+ * Adaptador para almacenamiento seguro del dispositivo.
+ *
+ * expo-secure-store utiliza los mecanismos seguros proporcionados
+ * por el sistema operativo para proteger los valores almacenados.
+ */
+class ExpoSecureStorageAdapter implements StorageAdapter {
   async getItem(key: string): Promise<string | null> {
-    const raw = this.store.get(key);
-    if (!raw) return null;
-    try {
-      return this.deobfuscate(raw);
-    } catch {
-      return null;
-    }
+    return SecureStore.getItemAsync(key);
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    this.store.set(key, this.obfuscate(value));
+    await SecureStore.setItemAsync(key, value);
   }
 
   async removeItem(key: string): Promise<void> {
-    this.store.delete(key);
+    await SecureStore.deleteItemAsync(key);
   }
 }
 
@@ -67,17 +61,18 @@ export class SecurityStorageService {
     secureAdapter?: StorageAdapter,
     standardAdapter?: StorageAdapter,
   ) {
-    this.secureStorage = secureAdapter ?? new EncryptedSecureStorage();
+    this.secureStorage = secureAdapter ?? new ExpoSecureStorageAdapter();
     this.standardStorage = standardAdapter ?? new InMemoryStorage();
   }
 
   /**
-   * Guarda información sensible (tokens, credenciales) en almacenamiento seguro cifrado.
+   * Guarda información sensible mediante almacenamiento seguro.
    */
   async saveSensitiveData(key: string, value: string): Promise<void> {
     if (!key || value === undefined) {
       throw new Error('Clave o valor inválidos para almacenamiento seguro');
     }
+
     await this.secureStorage.setItem(key, value);
   }
 
@@ -103,7 +98,7 @@ export class SecurityStorageService {
   }
 
   /**
-   * Recupera preferencias no sensibles del almacenamiento normal.
+   * Recupera preferencias no sensibles desde almacenamiento normal.
    */
   async getPublicPreference(key: string): Promise<string | null> {
     return this.standardStorage.getItem(key);

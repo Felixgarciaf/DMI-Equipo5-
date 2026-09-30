@@ -1,22 +1,29 @@
 {
   "schemaVersion": 1,
   "week": 4,
-  "commitSha": "2ce85ef03e2c8fa1d6c113df0010faadc71c2df9",
-  "generatedAt": "2026-09-27T01:02:45.000Z",
+  "commitSha": "880d50e5a2efe338a39856981a3e33c30e2a9ff1",
+  "generatedAt": "2026-09-29",
   "checks": [
     {
       "id": "redact-telemetry-nested-structures",
       "status": "pass",
       "scenarioType": "boundary",
       "command": "npx jest course-tests/public/week-04.test.ts",
-      "evidence": "All sensitive nested keys (authorization, email, location, photos) replaced with [REDACTED]."
+      "evidence": "Sensitive nested fields are replaced with [REDACTED] according to the CampusOps telemetry redaction contract."
     },
     {
       "id": "safe-error-handler-leak-prevention",
       "status": "pass",
       "scenarioType": "failure",
       "command": "npx jest tests/security/safeErrorHandler.test.ts",
-      "evidence": "Error handler strips Bearer tokens, email addresses, and secret payloads from exception outputs."
+      "evidence": "The error handler removes Bearer tokens, email addresses, and secret payloads from exception outputs."
+    },
+    {
+      "id": "sanitize-log-nested-sensitive-data",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --ci --runInBand tests/security/courseBackend.test.ts",
+      "evidence": "sanitizeLog redacts sensitive data inside nested incident objects, including email, name, location, and authorization, while preserving non-sensitive technical context. The test also verifies that the original email and token values are absent from the logged payload."
     }
   ]
 }
