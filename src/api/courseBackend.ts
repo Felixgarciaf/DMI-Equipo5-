@@ -1,3 +1,5 @@
+import { redactForTelemetry } from '../campusops/telemetry/redactForTelemetry';
+
 export type BackendHealth = Readonly<{
   ok: true;
   service: 'dmi-controlled-backend';
@@ -9,21 +11,20 @@ const getEnvBackendUrl = (): string => {
 };
 
 /**
- * Sanitiza la información enviada a consola para evitar filtración de tokens o datos sensibles.
+ * Sanitiza la información enviada a consola utilizando el redactor
+ * canónico de CampusOps para evitar filtraciones de datos sensibles.
  */
-export function sanitizeLog(message: string, data?: Record<string, unknown>): void {
+export function sanitizeLog(
+  message: string,
+  data?: Record<string, unknown>,
+): void {
   if (!data) {
     console.log(`[CampusOps Audit Log]: ${message}`);
     return;
   }
-  const safeData: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(data)) {
-    if (['token', 'password', 'accesstoken', 'refreshtoken', 'secret', 'authorization'].includes(key.toLowerCase())) {
-      safeData[key] = '[REDACTADO]';
-    } else {
-      safeData[key] = value;
-    }
-  }
+
+  const safeData = redactForTelemetry(data);
+
   console.log(`[CampusOps Audit Log]: ${message}`, safeData);
 }
 
