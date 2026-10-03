@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "teamId": "Equipo5",
+  "members": [
+    {
+      "studentId": "a3522110305",
+      "commitShas": [
+        "0c0f86f35f0db1b21bdcc74fa704c61212f94f2d"
+      ],
+      "files": [
+        "src/campusops/cloud/remoteResource.ts",
+        "src/course-evaluation/index.ts",
+        "tests/cloud/remoteResource.test.ts",
+        "reports/week-05/failure-matrix.json"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+        "npx eslint src/course-evaluation/index.ts src/campusops/cloud/remoteResource.ts tests/cloud/remoteResource.test.ts"
+      ],
+      "reviews": [
+        "Revise docs/CAMPUSOPS_API.md, course-tests/public/week-05.test.ts y DMI_Cesar_Manejo_Respuestas_Errores_Pruebas_Negativas.pdf para separar payload:null valido de respuesta null invalida."
+      ],
+      "prediction": "parseRemoteResource debe aceptar payload objeto y payload null dentro de un envelope valido, rechazar id vacio, version string, respuesta null y objetos incompletos, y los escenarios de timeout, 500, 429, malformed y slow deben resolverse como errores tipados sin excepciones sin controlar.",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "observedResult": "PASS tests/cloud/remoteResource.test.ts y PASS course-tests/public/week-05.test.ts; 2 test suites passed, 19 tests passed.",
+      "explanation": "Implemente la validacion compartida del recurso remoto en src/campusops/cloud/remoteResource.ts y conecte src/course-evaluation/index.ts a esa logica real. La frontera queda asi: payload:null es valido solo cuando el envelope tiene id, version entera no negativa, status y payload presente; una respuesta completamente null o malformada es error de contrato. Los escenarios negativos usan un stub determinista sin Internet publico y devuelven errores tipados para que la UI pueda distinguir timeout, slow response, HTTP 500, rate limit y contrato invalido."
+    }
+  ]
+}

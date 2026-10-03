@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "commitSha": "0c0f86f35f0db1b21bdcc74fa704c61212f94f2d",
+  "generatedAt": "2026-10-03T02:45:11.903Z",
+  "checks": [
+    {
+      "id": "nominal-valid-payload",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS tests/cloud/remoteResource.test.ts and PASS course-tests/public/week-05.test.ts. Valid envelope with object payload returns ok=true and preserves the provided payload."
+    },
+    {
+      "id": "boundary-valid-null-payload",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Envelope { id, version, status, payload: null } returns ok=true with payload:null. The client does not invent category, description or domain data."
+    },
+    {
+      "id": "boundary-null-response",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. A fully null response returns ok=false with error.kind=contract, proving valid payload:null and null response do not collapse into the same path."
+    },
+    {
+      "id": "boundary-empty-id",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Envelope with empty id is rejected as a contract error."
+    },
+    {
+      "id": "boundary-string-version",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Envelope with version:'3' is rejected because version must be a non-negative integer."
+    },
+    {
+      "id": "failure-malformed-response",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Deterministic malformed scenario resolves to ok=false with error.kind=contract instead of throwing."
+    },
+    {
+      "id": "failure-timeout",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Deterministic timeout scenario resolves to ok=false with error.kind=timeout and timeoutMs metadata."
+    },
+    {
+      "id": "failure-http-500",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Deterministic server_error scenario resolves to ok=false with error.kind=http and status 500."
+    },
+    {
+      "id": "failure-rate-limited-429",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Deterministic rate_limited scenario resolves to ok=false with error.kind=rate_limited, status 429 and retryAfterMs metadata."
+    },
+    {
+      "id": "failure-slow-response",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "evidence": "PASS. Deterministic slow scenario resolves to ok=false with error.kind=slow_response, preserving observedMs and timeoutMs for UI branching."
+    }
+  ]
+}
+
