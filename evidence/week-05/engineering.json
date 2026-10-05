@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "commitSha": "d4c9ffd3452a0500d0e7af5ab3b98003494feaf9",
+  "decision": "Centralizar la validación del recurso remoto de CampusOps en src/campusops/cloud/remoteResource.ts y mantener src/course-evaluation/index.ts como adaptador evaluable que delega en esa lógica. La decisión evita mantener dos implementaciones independientes de parseRemoteResource y permite probar de forma directa los escenarios controlados de respuestas válidas, payload null, respuestas malformadas y errores de cliente.",
+  "alternatives": [
+    {
+      "option": "Mantener la implementación de parseRemoteResource directamente en src/course-evaluation/index.ts.",
+      "benefit": "Conserva la implementación evaluable en el punto donde se encuentra el test público.",
+      "cost": "La lógica de validación queda acoplada al adaptador evaluable y no se reutiliza directamente desde la capa de cliente CampusOps."
+    },
+    {
+      "option": "Crear una segunda implementación independiente para el cliente cloud y conservar otra implementación en src/course-evaluation/index.ts.",
+      "benefit": "Permite separar físicamente las responsabilidades de cada capa.",
+      "cost": "Duplica la lógica de validación y puede provocar que ambas implementaciones acepten o rechacen respuestas diferentes."
+    },
+    {
+      "option": "Centralizar la validación en src/campusops/cloud/remoteResource.ts y hacer que el adaptador de src/course-evaluation/index.ts delegue en ella.",
+      "benefit": "Existe una sola lógica de validación para el DTO remoto y los tests del cliente y del adaptador verifican el mismo comportamiento.",
+      "cost": "Requiere ajustar el adaptador evaluable para importar y delegar en la implementación central."
+    }
+  ],
+  "tradeoff": {
+    "benefit": "Una única frontera de validación reduce la duplicación y mantiene consistente el comportamiento ante respuestas válidas, payload null, respuestas malformadas, timeout, HTTP 500, rate limiting y respuestas lentas.",
+    "cost": "La integración requiere modificar el adaptador existente y mantener la implementación compartida junto con sus pruebas específicas."
+  },
+  "requirementIds": [
+    "AC-01",
+    "AC-02",
+    "AC-03",
+    "AC-04",
+    "AC-05"
+  ],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "result": "PASS — 2 suites passed, 19 tests passed.",
+      "evidence": "tests/cloud/remoteResource.test.ts y course-tests/public/week-05.test.ts"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS — TypeScript terminó sin errores.",
+      "evidence": "Validación local del proyecto sobre el commit d4c9ffd3452a0500d0e7af5ab3b98003494feaf9."
+    },
+    {
+      "command": "npm run lint",
+      "result": "PASS — 0 errores; se conservaron 2 warnings preexistentes en tests/security/secureStorage.test.ts.",
+      "evidence": "Validación local de lint sobre el commit d4c9ffd3452a0500d0e7af5ab3b98003494feaf9."
+    },
+    {
+      "command": "npm run test:smoke",
+      "result": "PASS — prueba smoke completada correctamente.",
+      "evidence": "Validación local del proyecto sobre el commit d4c9ffd3452a0500d0e7af5ab3b98003494feaf9."
+    },
+    {
+      "command": "npm run backend:self-test",
+      "result": "PASS — CampusOps backend contracts: roles, reassignment conflict, lost response, idempotency, evidence and geocoding PASS.",
+      "evidence": "Self-test del backend didáctico."
+    }
+  ]
+}
