@@ -17,8 +17,42 @@ export function redactForTelemetry(input: unknown): unknown {
   return redactCampusOpsTelemetry(input);
 }
 
-export function parseRemoteResource(_input: unknown): ParseResult {
-  return pending('parseRemoteResource');
+export function parseRemoteResource(input: unknown): ParseResult {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+    return { ok: false, error: 'contract' };
+  }
+
+  const candidate = input as Record<string, unknown>;
+
+  if (
+    typeof candidate.id !== 'string' ||
+    candidate.id.trim() === '' ||
+    typeof candidate.version !== 'number' ||
+    !Number.isInteger(candidate.version) ||
+    candidate.version < 0 ||
+    typeof candidate.status !== 'string' ||
+    candidate.status.trim() === ''
+  ) {
+    return { ok: false, error: 'contract' };
+  }
+
+  const payload = candidate.payload;
+  if (
+    payload !== null &&
+    (typeof payload !== 'object' || Array.isArray(payload))
+  ) {
+    return { ok: false, error: 'contract' };
+  }
+
+  return {
+    ok: true,
+    value: {
+      id: candidate.id,
+      version: candidate.version,
+      status: candidate.status,
+      payload: payload as JsonObject | null,
+    },
+  };
 }
 
 export function coordinateRefresh(_events: readonly AuthEvent[]): Readonly<{

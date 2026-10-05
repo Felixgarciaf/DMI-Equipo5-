@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "commitSha": "97600475ea44a2b106a019a84eecb1ec49ff7da0",
+  "generatedAt": "2026-10-03T01:30:00.000Z",
+  "checks": [
+    {
+      "id": "scenario_success",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: success",
+      "evidence": "HTTP 200 OK received with valid DTO item envelope { id: 'resource-1', version: 1, status: 'open', payload: { label: 'CampusOps: incidencia sintética', category: 'connectivity' } }."
+    },
+    {
+      "id": "scenario_nullable",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: nullable",
+      "evidence": "HTTP 200 OK received with valid payload: null envelope { id: 'resource-1', version: 1, status: 'open', payload: null }. Boundary validation passed without inventing default data."
+    },
+    {
+      "id": "scenario_server_error",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: server_error",
+      "evidence": "HTTP 500 Internal Server Error returned with body { code: 'controlled_failure' }. Correctly categorized as server failure."
+    },
+    {
+      "id": "scenario_rate_limited",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: rate_limited",
+      "evidence": "HTTP 429 Too Many Requests returned with header Retry-After: 1 and body { code: 'rate_limited' }. Rate limit boundary verified."
+    },
+    {
+      "id": "scenario_malformed",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: malformed",
+      "evidence": "HTTP 200 returned with corrupted JSON text '{\"items\": ['. Client boundary validation parseRemoteResource / JSON parser correctly identified malformed contract."
+    },
+    {
+      "id": "scenario_slow",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: slow",
+      "evidence": "HTTP 200 OK returned after 1203ms deliberate delay. Verified slow server response handling."
+    },
+    {
+      "id": "scenario_timeout_after_commit",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "fetch http://127.0.0.1:4310/v1/resources/action with X-Course-Scenario: timeout_after_commit",
+      "evidence": "Operation completed on server (version: 2) but response delayed 1519ms. Replay using stable Idempotency-Key returned { duplicate: true } without duplicating history."
+    },
+    {
+      "id": "parse_remote_resource_boundary",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npx jest course-tests/public/week-05.test.ts",
+      "evidence": "5/5 unit tests passed. Successfully validated DTO envelope { id, version, status, payload } while ignoring forward-compatible extra fields."
+    }
+  ]
+}
