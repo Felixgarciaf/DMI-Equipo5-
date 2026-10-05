@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "week": 5,
-  "mode": "public",
-  "commitSha": "a7a8f222713699224316a6f3521eef2bb301ce78",
-  "evaluatedAt": "2026-10-05T04:40:50.371590+00:00",
+  "mode": "verify",
+  "commitSha": "7d56c42a93dd46567d70cb48219bd6fc5b7e6564",
+  "evaluatedAt": "2026-10-05T04:23:41.087087+00:00",
   "status": "fail",
   "checks": [
     {
@@ -32,31 +32,6 @@
       "detail": "hits=[]"
     },
     {
-      "id": "required_evidence",
-      "status": "pass",
-      "detail": "missing/empty=[]"
-    },
-    {
-      "id": "schema:reports/week-05/contract-tests.json",
-      "status": "fail",
-      "detail": "commitSha must be HEAD or its direct evidence-only parent"
-    },
-    {
-      "id": "schema:reports/week-05/failure-matrix.json",
-      "status": "fail",
-      "detail": "commitSha must be HEAD or its direct evidence-only parent"
-    },
-    {
-      "id": "schema:evidence/week-05/engineering.json",
-      "status": "fail",
-      "detail": "commitSha must be HEAD or its direct evidence-only parent"
-    },
-    {
-      "id": "schema:evidence/week-05/individual.json",
-      "status": "pass",
-      "detail": "three individual evidence records found"
-    },
-    {
       "id": "toolchain_1",
       "status": "fail",
       "detail": "npm run typecheck\n[WinError 2] El sistema no puede encontrar el archivo especificado"
@@ -74,7 +49,12 @@
     {
       "id": "toolchain_4",
       "status": "fail",
-      "detail": "npm test -- --ci --runInBand course-tests/public/week-05.test.ts\n[WinError 2] El sistema no puede encontrar el archivo especificado"
+      "detail": "npm run test:smoke\n[WinError 2] El sistema no puede encontrar el archivo especificado"
+    },
+    {
+      "id": "toolchain_5",
+      "status": "fail",
+      "detail": "npm run backend:self-test\n[WinError 2] El sistema no puede encontrar el archivo especificado"
     }
   ]
 }
