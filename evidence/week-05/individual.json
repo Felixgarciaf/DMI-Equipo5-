@@ -6,64 +6,69 @@
     {
       "studentId": "3522110551",
       "commitShas": [
+        "0e1e930d0a6461ae68ec4fa8293818546b38733f"
+      ],
+      "files": [
+        "tests/cloud/courseEvaluationAdapter.test.ts"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand tests/cloud/courseEvaluationAdapter.test.ts"
+      ],
+      "reviews": [
+        "Verificación de la integración entre el adaptador público de src/course-evaluation/index.ts y el parser central de CampusOps.",
+        "Verificación de aceptación de un DTO válido, conservación de payload null y rechazo de una respuesta malformada."
+      ],
+      "prediction": "El adaptador público de course-evaluation delegará en el parser central y conservará el comportamiento del contrato para respuestas válidas, payload null y respuestas malformadas.",
+      "command": "npm test -- --ci --runInBand tests/cloud/courseEvaluationAdapter.test.ts",
+      "observedResult": "PASS - 1 suite pasada y 3 pruebas pasadas.",
+      "explanation": "Implementé cobertura de integración para la frontera pública de course-evaluation, verificando que delega en el parser de CampusOps y que conserva las reglas de validación del DTO remoto."
+    },
+    {
+      "studentId": "a3522110305",
+      "commitShas": [
+        "0c0f86f35f0db1b21bdcc74fa704c61212f94f2d",
+        "6d1460a7d95533e45e93d4cd79c598f7410a17a4"
+      ],
+      "files": [
+        "src/campusops/cloud/remoteResource.ts",
+        "tests/cloud/remoteResource.test.ts",
+        "src/course-evaluation/index.ts",
+        "reports/week-05/failure-matrix.json"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts"
+      ],
+      "reviews": [
+        "Verificación de respuestas válidas y payload null.",
+        "Verificación de respuestas malformadas y errores controlados de timeout, HTTP 500, rate limiting y respuesta lenta."
+      ],
+      "prediction": "La capa de cliente distinguirá respuestas válidas, payload null, respuestas malformadas y errores controlados sin depender de un proveedor externo.",
+      "command": "npm test -- --ci --runInBand tests/cloud/remoteResource.test.ts course-tests/public/week-05.test.ts",
+      "observedResult": "PASS - 2 suites pasadas y 19 pruebas pasadas.",
+      "explanation": "Implementó la lógica central de validación y manejo de respuestas del cliente cloud y agregó las pruebas deterministas de los escenarios de Semana 5."
+    },
+    {
+      "studentId": "a3523110172",
+      "commitShas": [
         "97600475ea44a2b106a019a84eecb1ec49ff7da0",
         "4f7bc428ef3025817e59ef59d498330cca767da0"
       ],
       "files": [
         "src/course-evaluation/index.ts",
-        "reports/week-05/contract-tests.json",
-        "course-backend/README.md"
+        "reports/week-05/contract-tests.json"
       ],
       "tests": [
         "npx jest course-tests/public/week-05.test.ts",
         "npm run backend:self-test"
       ],
       "reviews": [
-        "Revisión de correspondencia entre el contrato de la API y el servidor simulado course-backend.",
-        "Verificación de reproducibilidad de los 7 escenarios controlados enviando X-Course-Scenario."
+        "Revisión de la correspondencia entre el contrato de la API y la implementación evaluable.",
+        "Verificación de los escenarios controlados documentados en contract-tests.json."
       ],
-      "prediction": "parseRemoteResource validará los sobres DTO remotos e ignorará atributos adicionales sin inventar datos en payloads nulos, y el backend responderá reproduciblemente a los 7 escenarios controlados.",
+      "prediction": "parseRemoteResource validará los sobres DTO publicados, aceptará payload null cuando el sobre sea válido e ignorará campos futuros del sobre.",
       "command": "npm run backend:self-test",
       "observedResult": "PASS - CampusOps backend contracts: roles, reassignment conflict, lost response, idempotency, evidence and geocoding PASS.",
-      "explanation": "Implementé la validación de sobre DTO en parseRemoteResource y verifiqué los 7 escenarios controlados del backend local sin depender de Internet público, registrando las evidencias en contract-tests.json (Felix)."
-    },
-    {
-      "studentId": "a3522110305",
-      "commitShas": [
-        "97600475ea44a2b106a019a84eecb1ec49ff7da0"
-      ],
-      "files": [
-        "src/course-evaluation/index.ts"
-      ],
-      "tests": [
-        "npx jest course-tests/public/week-05.test.ts"
-      ],
-      "reviews": [
-        "Revisión de la integración del cliente cloud y desacoplamiento con las pantallas."
-      ],
-      "prediction": "La capa de cliente manejará las peticiones HTTP sin invocaciones directas desde la UI.",
-      "command": "npx jest course-tests/public/week-05.test.ts",
-      "observedResult": "PASS - 5/5 pruebas unitarias pasadas.",
-      "explanation": "Revisé la integración de la capa cliente para la consulta e incidencias desacoplada de la UI."
-    },
-    {
-      "studentId": "a3523110172",
-      "commitShas": [
-        "97600475ea44a2b106a019a84eecb1ec49ff7da0"
-      ],
-      "files": [
-        "reports/week-05/failure-matrix.json"
-      ],
-      "tests": [
-        "npx jest course-tests/public/week-05.test.ts"
-      ],
-      "reviews": [
-        "Revisión y construcción de la matriz de fallos para casos de respuesta inválida y timeout."
-      ],
-      "prediction": "Los tipos distinguibles de error clasificarán 500, 429 y malformed adecuadamente.",
-      "command": "npx jest course-tests/public/week-05.test.ts",
-      "observedResult": "PASS - Validación de resiliencia completada.",
-      "explanation": "Construí la matriz de fallos registrando las respuestas inválidas y excepciones controladas."
+      "explanation": "Implementó la validación inicial del sobre DTO y documentó los escenarios controlados del backend didáctico para la Semana 5."
     }
   ]
 }
