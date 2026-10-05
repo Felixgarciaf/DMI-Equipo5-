@@ -9,8 +9,8 @@
     "Centralizar la validación en src/campusops/cloud/remoteResource.ts y hacer que el adaptador de src/course-evaluation/index.ts delegue en ella. Beneficio: existe una sola lógica de validación para el DTO remoto y los tests del cliente y del adaptador verifican el mismo comportamiento. Costo: requiere ajustar el adaptador evaluable para importar y delegar en la implementación central."
   ],
   "tradeoff": {
-    "benefit": "Una única frontera de validación reduce la duplicación y mantiene consistente el comportamiento ante respuestas válidas, payload null, respuestas malformadas, timeout, HTTP 500, rate limiting y respuestas lentas.",
-    "cost": "La integración requiere modificar el adaptador existente y mantener la implementación compartida junto con sus pruebas específicas."
+    "benefit": "Centralizar la validación en src/campusops/cloud/remoteResource.ts evita duplicar la interpretación del DTO remoto y hace que el cliente CampusOps y el adaptador evaluable compartan las mismas reglas para payload válido, payload null, respuestas malformadas, timeout, HTTP 500, rate limiting y respuestas lentas. Esto reduce el riesgo de comportamientos inconsistentes entre capas y permite verificar el límite mediante pruebas deterministas sin depender de Internet.",
+    "cost": "La centralización introduce una dependencia explícita del adaptador src/course-evaluation/index.ts hacia la lógica compartida y obliga a mantener esa frontera como contrato común. Además, cualquier cambio en las reglas del DTO requiere revisar las pruebas del cliente y del adaptador para evitar regresiones, por lo que se intercambia duplicación local por mantenimiento coordinado de una única frontera de validación."
   },
   "requirementIds": [
     "AC-01",
