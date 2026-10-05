@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 5,
-  "commitSha": "7d56c42a93dd46567d70cb48219bd6fc5b7e6564",
+  "commitSha": "a7a8f222713699224316a6f3521eef2bb301ce78",
   "decision": "Centralizar la validación del recurso remoto de CampusOps en src/campusops/cloud/remoteResource.ts y mantener src/course-evaluation/index.ts como adaptador evaluable que delega en esa lógica. La decisión evita mantener dos implementaciones independientes de parseRemoteResource y permite probar de forma directa los escenarios controlados de respuestas válidas, payload null, respuestas malformadas y errores de cliente.",
   "alternatives": [
     "Mantener la implementación de parseRemoteResource directamente en src/course-evaluation/index.ts. Beneficio: conserva la implementación evaluable en el punto donde se encuentra el test público. Costo: la lógica de validación queda acoplada al adaptador evaluable y no se reutiliza directamente desde la capa de cliente CampusOps.",
