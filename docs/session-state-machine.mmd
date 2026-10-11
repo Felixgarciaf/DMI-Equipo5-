@@ -1,0 +1,17 @@
+stateDiagram-v2
+  [*] --> unauthenticated
+  unauthenticated --> authenticated: login valido
+  authenticated --> expired: token vence / respuesta 401
+  expired --> refreshing: primer 401 inicia refresh single-flight
+  expired --> refreshing: 401 concurrente se une al refresh activo
+  refreshing --> authenticated: refresh exitoso / reintentos una vez
+  refreshing --> unauthenticated: refresh fallido / limpiar tokens
+  authenticated --> unauthenticated: logout / limpiar tokens
+  expired --> unauthenticated: logout / limpiar tokens
+  refreshing --> unauthenticated: logout / descartar refresh tardio
+
+  note right of authenticated
+    Reportante consulta sus incidencias.
+    Tecnico resuelve incidencias asignadas.
+    Coordinador cierra y reabre incidencias.
+  end note
