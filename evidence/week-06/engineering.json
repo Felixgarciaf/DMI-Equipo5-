@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "commitSha": "8434503fff491b271131015ffc6024e6509f88ee",
+  "decision": "La renovacion de sesion se coordina con una politica single-flight: la primera respuesta 401 abre un refresh compartido, las demas solicitudes de la misma generacion se agregan a la cola y solo se reintentan una vez si el refresh termina correctamente. Si el refresh falla o ocurre logout, el estado vuelve a no autenticado y se limpian los tokens persistidos.",
+  "alternatives": [
+    "Permitir que cada solicitud con 401 ejecute su propio refresh y reintento independiente.",
+    "Bloquear todo 401 cerrando sesion inmediatamente sin intentar renovacion compartida.",
+    "Coordinar un refresh unico por generacion y descartar resultados tardios despues de logout."
+  ],
+  "tradeoff": "La alternativa elegida reduce renovaciones duplicadas, evita bucles de refresh y mantiene una salida segura cuando falla la renovacion. El costo es mantener estado adicional de generacion, solicitudes pendientes y tokens persistidos, por lo que se cubrio con pruebas de concurrencia, fallo y logout.",
+  "requirementIds": [
+    "AC-02",
+    "AC-03",
+    "AC-04"
+  ],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand tests/security/authorization.test.ts tests/security/logout.test.ts tests/security/sessionCoordinator.test.ts course-tests/public/week-06.test.ts",
+      "result": "PASS - 4 suites pasadas, 11 pruebas pasadas.",
+      "evidence": "Las pruebas cubren permisos por perfil, limpieza de sesion, refresh single-flight, refresh fallido, logout y el contrato publico de coordinateRefresh."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS - TypeScript termino sin errores.",
+      "evidence": "La implementacion nueva en src/security y el adaptador de src/course-evaluation compilan bajo strict TypeScript."
+    },
+    {
+      "command": "npx eslint src/course-evaluation/index.ts src/security/incidentAccessPolicy.ts src/security/session.ts src/security/logout.ts src/security/sessionCoordinator.ts tests/security/authorization.test.ts tests/security/logout.test.ts tests/security/sessionCoordinator.test.ts",
+      "result": "PASS - ESLint no reporto problemas en los archivos modificados de Semana 06.",
+      "evidence": "Se ejecuto lint acotado porque el lint completo local falla por archivos no rastreados ajenos a esta rama."
+    }
+  ]
+}
