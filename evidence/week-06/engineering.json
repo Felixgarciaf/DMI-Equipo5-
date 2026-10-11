@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "decision": "Implementar una política de renovación de sesión concurrente basada en Single-Flight (Promesa compartida) y un solo reintento por solicitud 401.",
+  "alternatives": [
+    "Renovar la sesión individualmente por cada respuesta 401 recibida de forma independiente.",
+    "Bloquear globalmente la interfaz de usuario con un loader modal impidiendo cualquier petición concurrente hasta completar el refresh."
+  ],
+  "tradeoff": "Beneficio: Se reduce drásticamente la carga sobre el endpoint de autenticación al agrupar N respuestas 401 concurrentes en un único refresh. Costo: Requiere coordinar el estado de promesas y promesas diferidas (pending requests) con control de reintentos finitos.",
+  "requirementIds": ["AC-02", "AC-03", "AC-04"],
+  "verification": [
+    {
+      "command": "npx jest course-tests/public/week-06.test.ts tests/security/sessionAuthClient.test.ts",
+      "result": "PASS: 4 pruebas pasadas de 4. Se comprobó 1 solo refresh para 3 peticiones concurrentes y eliminación de token en logout.",
+      "evidence": "reports/week-06/concurrency.json"
+    }
+  ]
+}

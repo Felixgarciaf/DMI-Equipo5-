@@ -7,14 +7,13 @@ import type {
   SyncRecord,
 } from './contracts';
 import type { IncidentLocation } from '../campusops/contracts';
-import { redactForTelemetry as redactCampusOpsTelemetry } from '../campusops/telemetry/redactForTelemetry';
 
 function pending(name: string): never {
   throw new Error(`${name} must be implemented in the assigned week`);
 }
 
-export function redactForTelemetry(input: unknown): unknown {
-  return redactCampusOpsTelemetry(input);
+export function redactForTelemetry(_input: unknown): unknown {
+  return pending('redactForTelemetry');
 }
 
 export function parseRemoteResource(input: unknown): ParseResult {
@@ -55,14 +54,58 @@ export function parseRemoteResource(input: unknown): ParseResult {
   };
 }
 
-export function coordinateRefresh(_events: readonly AuthEvent[]): Readonly<{
+export function coordinateRefresh(events: readonly AuthEvent[]): Readonly<{
   status: 'anonymous' | 'authenticated';
   activeGeneration: number | null;
   refreshCalls: number;
   retriedRequestIds: readonly string[];
   persistedToken: string | null;
 }> {
-  return pending('coordinateRefresh');
+  let status: 'anonymous' | 'authenticated' = 'anonymous';
+  let activeGeneration: number | null = null;
+  let refreshCalls = 0;
+  let persistedToken: string | null = null;
+  const pendingRequests: string[] = [];
+  const retriedRequestIds: string[] = [];
+  let activeRefreshGen: number | null = null;
+
+  for (const event of events) {
+    if (event.type === 'request401') {
+      if (event.requestId && !pendingRequests.includes(event.requestId)) {
+        pendingRequests.push(event.requestId);
+      }
+      const gen = event.generation ?? 0;
+      if (activeRefreshGen !== gen) {
+        activeRefreshGen = gen;
+        refreshCalls += 1;
+      }
+    } else if (event.type === 'refreshSucceeded') {
+      status = 'authenticated';
+      activeGeneration = event.generation ?? 1;
+      persistedToken = event.token ?? null;
+      activeRefreshGen = null;
+      while (pendingRequests.length > 0) {
+        const reqId = pendingRequests.shift();
+        if (reqId) {
+          retriedRequestIds.push(reqId);
+        }
+      }
+    } else if (event.type === 'refreshFailed' || event.type === 'logout') {
+      status = 'anonymous';
+      activeGeneration = null;
+      persistedToken = null;
+      activeRefreshGen = null;
+      pendingRequests.length = 0;
+    }
+  }
+
+  return {
+    status,
+    activeGeneration,
+    refreshCalls,
+    retriedRequestIds,
+    persistedToken,
+  };
 }
 
 export function resolveSync(

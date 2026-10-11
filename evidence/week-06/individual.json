@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "teamId": "Equipo-05",
+  "members": [
+    {
+      "studentId": "3523110172",
+      "commitShas": [],
+      "files": [
+        "src/course-evaluation/index.ts",
+        "src/security/sessionAuthClient.ts",
+        "docs/session-state-machine.mmd",
+        "tests/security/sessionAuthClient.test.ts"
+      ],
+      "tests": [
+        "course-tests/public/week-06.test.ts",
+        "tests/security/sessionAuthClient.test.ts"
+      ],
+      "reviews": [],
+      "prediction": "Se esperaba que 3 peticiones simultáneas con respuesta 401 generen exactamente 1 llamada de refresh compartida y que logout elimine los tokens persistidos.",
+      "command": "npx jest course-tests/public/week-06.test.ts tests/security/sessionAuthClient.test.ts",
+      "observedResult": "Las pruebas pasaron exitosamente demostrando 1 sola llamada de renovación, reintentos finitos y eliminación de sesión en logout.",
+      "explanation": "Implementé la lógica de coalescencia en coordinateRefresh y SessionAuthClient mediante promesas compartidas (single-flight) y control de estados de sesión."
+    },
+    {
+      "studentId": "3523110173",
+      "commitShas": [],
+      "files": [],
+      "tests": [],
+      "reviews": [],
+      "prediction": "Pendiente de completar por el integrante 2",
+      "command": "npm test",
+      "observedResult": "Pendiente",
+      "explanation": "Pendiente"
+    },
+    {
+      "studentId": "3523110174",
+      "commitShas": [],
+      "files": [],
+      "tests": [],
+      "reviews": [],
+      "prediction": "Pendiente de completar por el integrante 3",
+      "command": "npm test",
+      "observedResult": "Pendiente",
+      "explanation": "Pendiente"
+    }
+  ]
+}
