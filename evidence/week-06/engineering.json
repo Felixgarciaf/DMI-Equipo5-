@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 6,
+  "commitSha": "526624c20ba9eabd9fc1b12857ccb0a3b71c5c5e",
   "decision": "Implementar una política de renovación de sesión concurrente basada en Single-Flight (Promesa compartida) y un solo reintento por solicitud 401.",
   "alternatives": [
     "Renovar la sesión individualmente por cada respuesta 401 recibida de forma independiente.",
