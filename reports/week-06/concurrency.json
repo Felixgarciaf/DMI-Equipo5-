@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "commitSha": "8434503fff491b271131015ffc6024e6509f88ee",
+  "generatedAt": "2026-10-10T21:56:27.3120886-06:00",
+  "checks": [
+    {
+      "id": "single-flight-refresh",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand tests/security/sessionCoordinator.test.ts",
+      "evidence": "PASS; tres respuestas 401 concurrentes de la misma generacion producen refreshCalls=1 y reintentan una vez los requestId a, b y c."
+    },
+    {
+      "id": "refresh-failure-safe-state",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/security/sessionCoordinator.test.ts",
+      "evidence": "PASS; refreshFailed limpia persistedToken, deja activeGeneration=null y status=anonymous sin reintentar solicitudes pendientes."
+    },
+    {
+      "id": "logout-discards-late-refresh",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand tests/security/sessionCoordinator.test.ts",
+      "evidence": "PASS; un refreshSucceeded tardio despues de logout no resucita la sesion y persistedToken permanece null."
+    }
+  ]
+}

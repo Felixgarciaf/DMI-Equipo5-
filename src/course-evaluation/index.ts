@@ -8,6 +8,7 @@ import type {
 } from './contracts';
 import type { IncidentLocation } from '../campusops/contracts';
 import { redactForTelemetry as redactCampusOpsTelemetry } from '../campusops/telemetry/redactForTelemetry';
+import { coordinateSessionRefresh } from '../security/sessionCoordinator';
 
 function pending(name: string): never {
   throw new Error(`${name} must be implemented in the assigned week`);
@@ -62,7 +63,7 @@ export function coordinateRefresh(_events: readonly AuthEvent[]): Readonly<{
   retriedRequestIds: readonly string[];
   persistedToken: string | null;
 }> {
-  return pending('coordinateRefresh');
+  return coordinateSessionRefresh(_events);
 }
 
 export function resolveSync(

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "commitSha": "8434503fff491b271131015ffc6024e6509f88ee",
+  "generatedAt": "2026-10-10T21:56:27.3120886-06:00",
+  "checks": [
+    {
+      "id": "role-permissions",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand tests/security/authorization.test.ts",
+      "evidence": "PASS tests/security/authorization.test.ts; valida lectura por reportante propio, tecnico asignado y coordinador, y rechaza reportante ajeno, tecnico no asignado y acciones no autorizadas."
+    },
+    {
+      "id": "logout-clears-session",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand tests/security/logout.test.ts",
+      "evidence": "PASS tests/security/logout.test.ts; logoutSession elimina session_token, refresh_token y session_actor y readPersistedSession regresa status unauthenticated."
+    },
+    {
+      "id": "public-week-06-auth-contract",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts",
+      "evidence": "PASS course-tests/public/week-06.test.ts; coordinateRefresh conserva token renovado en exito y deja persistedToken en null despues de logout."
+    }
+  ]
+}
