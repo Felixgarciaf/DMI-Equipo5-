@@ -29,7 +29,75 @@ export function coordinateRefresh(_events: readonly AuthEvent[]): Readonly<{
   retriedRequestIds: readonly string[];
   persistedToken: string | null;
 }> {
-  return pending('coordinateRefresh');
+  let status: 'anonymous' | 'authenticated' = 'anonymous';
+  let activeGeneration: number | null = null;
+  let refreshingGeneration: number | null = null;
+  let refreshCalls = 0;
+  let persistedToken: string | null = null;
+  const requestIds: string[] = [];
+  const retriedRequestIds: string[] = [];
+
+  for (const event of _events) {
+    switch (event.type) {
+      case 'request401':
+        if (event.generation === undefined) break;
+        if (refreshingGeneration === null) {
+          refreshingGeneration = event.generation;
+          activeGeneration = event.generation;
+          refreshCalls += 1;
+        }
+        if (
+          event.generation === refreshingGeneration &&
+          typeof event.requestId === 'string' &&
+          !requestIds.includes(event.requestId)
+        ) {
+          requestIds.push(event.requestId);
+        }
+        break;
+      case 'refreshSucceeded':
+        if (
+          refreshingGeneration !== null &&
+          event.generation === refreshingGeneration + 1
+        ) {
+          status = 'authenticated';
+          activeGeneration = event.generation;
+          persistedToken = event.token ?? null;
+          retriedRequestIds.push(...requestIds);
+          requestIds.length = 0;
+          refreshingGeneration = null;
+        }
+        break;
+      case 'refreshFailed':
+        if (
+          refreshingGeneration !== null &&
+          (event.generation === undefined ||
+            event.generation === refreshingGeneration)
+        ) {
+          status = 'anonymous';
+          activeGeneration = null;
+          persistedToken = null;
+          requestIds.length = 0;
+          refreshingGeneration = null;
+        }
+        break;
+      case 'logout':
+        status = 'anonymous';
+        activeGeneration = null;
+        refreshingGeneration = null;
+        persistedToken = null;
+        requestIds.length = 0;
+        retriedRequestIds.length = 0;
+        break;
+    }
+  }
+
+  return {
+    status,
+    activeGeneration,
+    refreshCalls,
+    retriedRequestIds,
+    persistedToken,
+  };
 }
 
 export function resolveSync(
