@@ -14,15 +14,15 @@ function pending(name: string): never {
   throw new Error(`${name} must be implemented in the assigned week`);
 }
 
-export function redactForTelemetry(input: unknown): unknown {
-  return redactCampusOpsTelemetry(input);
+export function redactForTelemetry(_input: unknown): unknown {
+  return pending('redactForTelemetry');
 }
 
 export function parseRemoteResource(input: unknown): ParseResult {
   return parseCampusOpsRemoteResource(input);
 }
 
-export function coordinateRefresh(_events: readonly AuthEvent[]): Readonly<{
+export function coordinateRefresh(events: readonly AuthEvent[]): Readonly<{
   status: 'anonymous' | 'authenticated';
   activeGeneration: number | null;
   refreshCalls: number;

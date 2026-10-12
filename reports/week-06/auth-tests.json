@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "suite": "auth-tests",
+  "status": "passed",
+  "tests": [
+    {
+      "name": "login and session establishment",
+      "status": "passed",
+      "durationMs": 45
+    },
+    {
+      "name": "session expiration handling",
+      "status": "passed",
+      "durationMs": 52
+    },
+    {
+      "name": "authorization checks for campusops roles",
+      "status": "passed",
+      "durationMs": 38
+    },
+    {
+      "name": "logout removes persisted session state and secureStorage tokens",
+      "status": "passed",
+      "durationMs": 30
+    }
+  ]
+}

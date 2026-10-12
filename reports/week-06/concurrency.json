@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "suite": "concurrency",
+  "status": "passed",
+  "coalescedRefreshCalls": 1,
+  "concurrentRequests": 3,
+  "tests": [
+    {
+      "name": "coalesces concurrent 401s into single refresh and retries each request once",
+      "status": "passed",
+      "durationMs": 110
+    },
+    {
+      "name": "prevents infinite refresh loops on repeated 401 failures",
+      "status": "passed",
+      "durationMs": 65
+    }
+  ]
+}

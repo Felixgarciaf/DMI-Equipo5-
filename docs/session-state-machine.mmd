@@ -1,0 +1,27 @@
+stateDiagram-v2
+    [*] --> Anonymous : Inicio / Estado por defecto
+
+    state Anonymous {
+        [*] --> Unauthenticated
+        Unauthenticated --> LoginSubmit : Ingresar credenciales
+    }
+
+    Anonymous --> Authenticated : Login exitoso / Set tokens (AccessToken + RefreshToken)
+
+    state Authenticated {
+        [*] --> SessionActive : Token válido (Bearer)
+        SessionActive --> SessionExpired : Detecta HTTP 401
+    }
+
+    Authenticated --> Refreshing : Coalesce 401s (Single-flight Refresh)
+
+    state Refreshing {
+        [*] --> ExecutingSingleRefresh : Promesa única activa
+        ExecutingSingleRefresh --> SingleRefreshSuccess : Renovación exitosa
+        ExecutingSingleRefresh --> SingleRefreshFailure : Token de refresco expirado o inválido
+    }
+
+    Refreshing --> Authenticated : SingleRefreshSuccess / Actualizar AccessToken y reintentar peticiones (1 solo reintento)
+    Refreshing --> Anonymous : SingleRefreshFailure / Clear session, remover tokens y redirigir a Login
+
+    Authenticated --> Anonymous : User Logout / Borrar tokens de SecureStorage
