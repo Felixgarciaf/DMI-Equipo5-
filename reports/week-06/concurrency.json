@@ -1,20 +1,29 @@
 {
-  "schemaVersion": 1,
-  "week": 6,
-  "suite": "concurrency",
-  "status": "passed",
-  "coalescedRefreshCalls": 1,
-  "concurrentRequests": 3,
-  "tests": [
-    {
-      "name": "coalesces concurrent 401s into single refresh and retries each request once",
-      "status": "passed",
-      "durationMs": 110
-    },
-    {
-      "name": "prevents infinite refresh loops on repeated 401 failures",
-      "status": "passed",
-      "durationMs": 65
-    }
-  ]
+    "schemaVersion":  1,
+    "week":  6,
+    "commitSha":  "a721c1b3271964f072ca4f7cd1cbad77a6a662c2",
+    "generatedAt":  "2026-10-10T21:56:27.3120886-06:00",
+    "checks":  [
+                   {
+                       "id":  "single-flight-refresh",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "npm test -- --ci --runInBand tests/security/sessionCoordinator.test.ts",
+                       "evidence":  "PASS; tres respuestas 401 concurrentes de la misma generacion producen refreshCalls=1 y reintentan una vez los requestId a, b y c."
+                   },
+                   {
+                       "id":  "refresh-failure-safe-state",
+                       "status":  "pass",
+                       "scenarioType":  "failure",
+                       "command":  "npm test -- --ci --runInBand tests/security/sessionCoordinator.test.ts",
+                       "evidence":  "PASS; refreshFailed limpia persistedToken, deja activeGeneration=null y status=anonymous sin reintentar solicitudes pendientes."
+                   },
+                   {
+                       "id":  "logout-discards-late-refresh",
+                       "status":  "pass",
+                       "scenarioType":  "boundary",
+                       "command":  "npm test -- --ci --runInBand tests/security/sessionCoordinator.test.ts",
+                       "evidence":  "PASS; un refreshSucceeded tardio despues de logout no resucita la sesion y persistedToken permanece null."
+                   }
+               ]
 }

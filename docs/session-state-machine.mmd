@@ -1,27 +1,18 @@
 stateDiagram-v2
-    [*] --> Anonymous : Inicio / Estado por defecto
+  [*] --> unauthenticated
+  unauthenticated --> authenticated: login valido
+  authenticated --> expired: token vence / respuesta 401
+  expired --> refreshing: primer 401 inicia refresh single-flight
+  expired --> refreshing: 401 concurrente se une al refresh activo
+  refreshing --> authenticated: refresh exitoso / reintentos una vez
+  refreshing --> unauthenticated: refresh fallido / limpiar tokens
+  authenticated --> unauthenticated: logout / limpiar tokens
+  expired --> unauthenticated: logout / limpiar tokens
+  refreshing --> unauthenticated: logout / descartar refresh tardio
 
-    state Anonymous {
-        [*] --> Unauthenticated
-        Unauthenticated --> LoginSubmit : Ingresar credenciales
-    }
-
-    Anonymous --> Authenticated : Login exitoso / Set tokens (AccessToken + RefreshToken)
-
-    state Authenticated {
-        [*] --> SessionActive : Token válido (Bearer)
-        SessionActive --> SessionExpired : Detecta HTTP 401
-    }
-
-    Authenticated --> Refreshing : Coalesce 401s (Single-flight Refresh)
-
-    state Refreshing {
-        [*] --> ExecutingSingleRefresh : Promesa única activa
-        ExecutingSingleRefresh --> SingleRefreshSuccess : Renovación exitosa
-        ExecutingSingleRefresh --> SingleRefreshFailure : Token de refresco expirado o inválido
-    }
-
-    Refreshing --> Authenticated : SingleRefreshSuccess / Actualizar AccessToken y reintentar peticiones (1 solo reintento)
-    Refreshing --> Anonymous : SingleRefreshFailure / Clear session, remover tokens y redirigir a Login
-
-    Authenticated --> Anonymous : User Logout / Borrar tokens de SecureStorage
+  note right of authenticated
+    Reportante consulta sus incidencias.
+    Tecnico inicia incidencias asignadas y solo resuelve en progreso.
+    Coordinador cierra incidencias resueltas y reabre cerradas o resueltas.
+    Logout invalida renovaciones pendientes y elimina credenciales persistidas.
+  end note

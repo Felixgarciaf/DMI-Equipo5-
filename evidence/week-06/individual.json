@@ -25,26 +25,56 @@
       "explanation": "Implementé la lógica de coalescencia en coordinateRefresh y SessionAuthClient mediante promesas compartidas (single-flight) y control de estados de sesión."
     },
     {
-      "studentId": "INTEGRANTE_2",
-      "commitShas": [],
-      "files": [],
-      "tests": [],
-      "reviews": [],
-      "prediction": "Pendiente de completar por el integrante 2",
-      "command": "npm test",
-      "observedResult": "Pendiente",
-      "explanation": "Pendiente"
-    },
-    {
-      "studentId": "INTEGRANTE_3",
-      "commitShas": [],
-      "files": [],
-      "tests": [],
-      "reviews": [],
-      "prediction": "Pendiente de completar por el integrante 3",
-      "command": "npm test",
-      "observedResult": "Pendiente",
-      "explanation": "Pendiente"
-    }
+  "studentId": "3522110305",
+  "commitShas": [
+     "8434503fff491b271131015ffc6024e6509f88ee"
+  ],
+  "files": [
+    "src/security/incidentAccessPolicy.ts",
+    "src/security/sessionCoordinator.ts",
+    "src/security/session.ts",
+    "src/security/logout.ts",
+    "tests/security/authorization.test.ts",
+    "tests/security/sessionCoordinator.test.ts",
+    "tests/security/logout.test.ts",
+    "reports/week-06/auth-tests.json",
+    "reports/week-06/concurrency.json",
+    "evidence/week-06/engineering.json"
+  ],
+  "tests": [
+    "npm test -- --ci --runInBand tests/security/authorization.test.ts tests/security/logout.test.ts tests/security/sessionCoordinator.test.ts course-tests/public/week-06.test.ts",
+    "npm run typecheck"
+  ],
+  "reviews": [
+    "Revision de permisos por perfil, limpieza de sesion en logout y refresh single-flight para evitar renovaciones duplicadas."
+  ],
+  "prediction": "Las pruebas deben confirmar que solo los perfiles autorizados realizan acciones, que logout elimina los tokens y que varias respuestas 401 comparten una sola renovacion.",
+  "command": "npm test -- --ci --runInBand tests/security/authorization.test.ts tests/security/logout.test.ts tests/security/sessionCoordinator.test.ts course-tests/public/week-06.test.ts",
+  "observedResult": "PASS - 4 suites pasadas, 11 pruebas pasadas.",
+  "explanation": "Implemente la parte de Cesar para Semana 06: autorizacion por perfiles de CampusOps, logout con limpieza de tokens persistidos y coordinacion de refresh single-flight conectada a coordinateRefresh."
+},
+{
+  "studentId": "3522110551",
+  "commitShas": [
+    "a86412f4ef0f68e18ef4eb3b68ac773f933c46bf"
+  ],
+  "files": [
+    "src/security/sessionAuthClient.ts",
+    "evidence/week-06/individual.json"
+  ],
+  "tests": [
+    "course-tests/public/week-06.test.ts",
+    "tests/security/sessionAuthClient.test.ts"
+  ],
+  "reviews": [
+    "Integración de los cambios de César y Félix en la rama claudia/semana-06-integracion",
+    "Revisión y resolución de conflictos de merge",
+    "Eliminación de tokens de los mensajes de log"
+  ],
+  "prediction": "Tres peticiones concurrentes con respuesta 401 deben compartir una sola renovación; los logs no deben revelar los tokens.",
+  "command": "npm run typecheck && npx jest course-tests/public/week-06.test.ts tests/security/sessionAuthClient.test.ts --runInBand",
+  "observedResult": "TypeScript terminó sin errores y las dos suites seleccionadas pasaron: 7 pruebas aprobadas de 7.",
+  "explanation": "Integré los cambios de las ramas de César y Félix en una rama basada en develop, resolví los conflictos revisando las implementaciones y modifiqué los mensajes de log de SessionAuthClient para evitar que impriman los valores de los tokens."
+}
   ]
 }
