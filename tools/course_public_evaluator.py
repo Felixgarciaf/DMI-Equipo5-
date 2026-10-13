@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -23,6 +24,13 @@ SECRET_PATTERNS = {
 
 
 def run(repo: Path, command: list[str], timeout: int = 300) -> tuple[bool, str]:
+    if os.name == "nt" and command and command[0] == "npm":
+        command = [
+            os.environ.get("COMSPEC", "cmd.exe"),
+            "/d",
+            "/c",
+            subprocess.list2cmdline(command),
+        ]
     try:
         result = subprocess.run(command, cwd=repo, text=True, capture_output=True, timeout=timeout)
     except (OSError, subprocess.TimeoutExpired) as exc:

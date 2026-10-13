@@ -1,3 +1,4 @@
+import { logoutBackendSession } from "../api/courseBackend";
 import {
   clearPersistedSession,
   type SessionState,
@@ -8,6 +9,9 @@ import {
 export async function logoutSession(
   storage?: SessionStorage,
 ): Promise<SessionState> {
-  await clearPersistedSession(storage);
+  await Promise.all([
+    clearPersistedSession(storage),
+    logoutBackendSession(),
+  ]);
   return unauthenticatedSession;
 }

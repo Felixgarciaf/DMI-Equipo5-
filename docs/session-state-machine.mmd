@@ -12,6 +12,7 @@ stateDiagram-v2
 
   note right of authenticated
     Reportante consulta sus incidencias.
-    Tecnico resuelve incidencias asignadas.
-    Coordinador cierra y reabre incidencias.
+    Tecnico inicia incidencias asignadas y solo resuelve en progreso.
+    Coordinador cierra incidencias resueltas y reabre cerradas o resueltas.
+    Logout invalida renovaciones pendientes y elimina credenciales persistidas.
   end note

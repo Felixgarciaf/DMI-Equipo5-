@@ -21,7 +21,18 @@ export async function testCampusOps(baseUrl) {
   const action = (actor, body, key, status = 201) => call(actionPath, status, actor, body, key);
   const login = await call('/v1/session/login', 200, 'technician-1', { actorId: 'technician-1' });
   assert.equal(login.role, 'technician');
-  await call('/v1/session/login', 401, 'technician-1', { actorId: 'not-a-student' });
+  assert.equal(login.actorId, 'technician-1');
+  assert.equal(typeof login.accessToken, 'string');
+  assert.equal(typeof login.refreshToken, 'string');
+  assert.equal(login.expiresIn, 60);
+  const invalidLogin = await call(
+    '/v1/session/login',
+    401,
+    'technician-1',
+    { actorId: 'not-a-student' },
+  );
+  assert.equal(invalidLogin.code, 'unknown_fixture_actor');
+  assert.equal(Object.hasOwn(invalidLogin, 'accessToken'), false);
   await call('/v1/incidents', 401, 'unknown');
   const mismatchedToken = await fetch(`${baseUrl}/v1/incidents`, {
     headers: {

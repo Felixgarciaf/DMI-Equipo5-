@@ -18,6 +18,14 @@ const closedIncident: ProtectedIncident = {
   ...assignedIncident,
   status: "closed",
 };
+const assignedPendingIncident: ProtectedIncident = {
+  ...assignedIncident,
+  status: "assigned",
+};
+const resolvedIncident: ProtectedIncident = {
+  ...assignedIncident,
+  status: "resolved",
+};
 
 test("enforces read permissions for reporter, assigned technician and coordinator", () => {
   expect(
@@ -65,15 +73,33 @@ test("allows only the assigned technician to resolve an active incident", () => 
       assignedIncident,
     ),
   ).toBe(false);
+  expect(
+    canResolveIncident(
+      { id: "technician-1", role: "technician" },
+      assignedPendingIncident,
+    ),
+  ).toBe(false);
+  expect(
+    canResolveIncident(
+      { id: "technician-1", role: "technician" },
+      closedIncident,
+    ),
+  ).toBe(false);
 });
 
 test("allows coordinators to close and reopen incidents", () => {
   expect(
     canCloseIncident(
       { id: "coordinator-1", role: "coordinator" },
-      assignedIncident,
+      resolvedIncident,
     ),
   ).toBe(true);
+  expect(
+    canCloseIncident(
+      { id: "coordinator-1", role: "coordinator" },
+      assignedIncident,
+    ),
+  ).toBe(false);
   expect(
     canCloseIncident(
       { id: "technician-1", role: "technician" },
@@ -84,6 +110,12 @@ test("allows coordinators to close and reopen incidents", () => {
     canReopenIncident(
       { id: "coordinator-1", role: "coordinator" },
       closedIncident,
+    ),
+  ).toBe(true);
+  expect(
+    canReopenIncident(
+      { id: "coordinator-1", role: "coordinator" },
+      resolvedIncident,
     ),
   ).toBe(true);
   expect(
@@ -106,4 +138,18 @@ test("returns a denial decision for unauthorized actions", () => {
       "resolve",
     ),
   ).toEqual({ allowed: false, reason: "not_assigned_technician" });
+  expect(
+    authorizeIncidentAction(
+      { id: "technician-1", role: "technician" },
+      assignedPendingIncident,
+      "resolve",
+    ),
+  ).toEqual({ allowed: false, reason: "invalid_state" });
+  expect(
+    authorizeIncidentAction(
+      { id: "coordinator-1", role: "coordinator" },
+      assignedIncident,
+      "close",
+    ),
+  ).toEqual({ allowed: false, reason: "invalid_state" });
 });
