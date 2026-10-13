@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 5,
-  "commitSha": "97600475ea44a2b106a019a84eecb1ec49ff7da0",
+  "commitSha": "a7a8f222713699224316a6f3521eef2bb301ce78",
   "generatedAt": "2026-10-03T01:30:00.000Z",
   "checks": [
     {
@@ -9,7 +9,7 @@
       "status": "pass",
       "scenarioType": "nominal",
       "command": "fetch http://127.0.0.1:4310/v1/resources with X-Course-Scenario: success",
-      "evidence": "HTTP 200 OK received with valid DTO item envelope { id: 'resource-1', version: 1, status: 'open', payload: { label: 'CampusOps: incidencia sintética', category: 'connectivity' } }."
+      "evidence": "HTTP 200 OK received with valid DTO item envelope { id: 'resource-1', version: 1, status: 'open', payload: { label: 'CampusOps: incidencia sintÃ©tica', category: 'connectivity' } }."
     },
     {
       "id": "scenario_nullable",

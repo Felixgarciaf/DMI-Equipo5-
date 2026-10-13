@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "teamId": "Equipo-05",
+  "members": [
+    {
+      "studentId": "3523110172",
+      "commitShas": [
+        "526624c20ba9eabd9fc1b12857ccb0a3b71c5c5e"
+      ],
+      "files": [
+        "src/course-evaluation/index.ts",
+        "src/security/sessionAuthClient.ts",
+        "docs/session-state-machine.mmd",
+        "tests/security/sessionAuthClient.test.ts"
+      ],
+      "tests": [
+        "course-tests/public/week-06.test.ts",
+        "tests/security/sessionAuthClient.test.ts"
+      ],
+      "reviews": [],
+      "prediction": "Se esperaba que 3 peticiones simultáneas con respuesta 401 generen exactamente 1 llamada de refresh compartida y que logout elimine los tokens persistidos.",
+      "command": "npx jest course-tests/public/week-06.test.ts tests/security/sessionAuthClient.test.ts",
+      "observedResult": "Las pruebas pasaron exitosamente demostrando 1 sola llamada de renovación, reintentos finitos y eliminación de sesión en logout.",
+      "explanation": "Implementé la lógica de coalescencia en coordinateRefresh y SessionAuthClient mediante promesas compartidas (single-flight) y control de estados de sesión."
+    },
+    {
+      "studentId": "INTEGRANTE_2",
+      "commitShas": [],
+      "files": [],
+      "tests": [],
+      "reviews": [],
+      "prediction": "Pendiente de completar por el integrante 2",
+      "command": "npm test",
+      "observedResult": "Pendiente",
+      "explanation": "Pendiente"
+    },
+{
+  "studentId": "3522110551",
+  "commitShas": [],
+  "files": [
+    "src/security/sessionAuthClient.ts",
+    "evidence/week-06/individual.json"
+  ],
+  "tests": [
+    "course-tests/public/week-06.test.ts",
+    "tests/security/sessionAuthClient.test.ts"
+  ],
+  "reviews": [
+    "Integración de los cambios de César y Félix en la rama claudia/semana-06-integracion",
+    "Revisión y resolución de conflictos de merge",
+    "Eliminación de tokens de los mensajes de log"
+  ],
+  "prediction": "Tres peticiones concurrentes con respuesta 401 deben compartir una sola renovación; los logs no deben revelar los tokens.",
+  "command": "npm run typecheck && npx jest course-tests/public/week-06.test.ts tests/security/sessionAuthClient.test.ts --runInBand",
+  "observedResult": "TypeScript terminó sin errores y las dos suites seleccionadas pasaron: 7 pruebas aprobadas de 7.",
+  "explanation": "Integré los cambios de las ramas de César y Félix en una rama basada en develop, resolví los conflictos revisando las implementaciones y modifiqué los mensajes de log de SessionAuthClient para evitar que impriman los valores de los tokens."
+}
+
+  ]
+}
