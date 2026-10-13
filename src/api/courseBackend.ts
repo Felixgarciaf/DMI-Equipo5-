@@ -4,6 +4,7 @@ import { secureStorageService } from '../security/secureStorage';
 const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
 let refreshPromise: Promise<string> | null = null;
+let sessionRevision = 0;
 
 export type SessionStatus = 'authenticated' | 'anonymous';
 
@@ -28,15 +29,29 @@ export function subscribeToSessionStatus(
   return () => sessionStatusListeners.delete(listener);
 }
 
-async function clearSession(): Promise<void> {
+async function clearBackendTokens(): Promise<void> {
+  await Promise.all([
+    secureStorageService.removeSensitiveData(ACCESS_TOKEN_KEY),
+    secureStorageService.removeSensitiveData(REFRESH_TOKEN_KEY),
+  ]);
+}
+
+async function clearSession(expectedRevision?: number): Promise<void> {
+  if (expectedRevision !== undefined && expectedRevision !== sessionRevision) {
+    return;
+  }
+
+  sessionRevision += 1;
+  refreshPromise = null;
   try {
-    await Promise.all([
-      secureStorageService.removeSensitiveData(ACCESS_TOKEN_KEY),
-      secureStorageService.removeSensitiveData(REFRESH_TOKEN_KEY),
-    ]);
+    await clearBackendTokens();
   } finally {
     updateSessionStatus('anonymous');
   }
+}
+
+export async function logoutBackendSession(): Promise<void> {
+  await clearSession();
 }
 
 export type BackendHealth = Readonly<{
@@ -67,8 +82,18 @@ export function sanitizeLog(
   console.log(`[CampusOps Audit Log]: ${message}`, safeData);
 }
 
-async function refreshAccessToken(baseUrl: string): Promise<string> {
+function ensureSessionRevision(revision: number): void {
+  if (revision !== sessionRevision) {
+    throw new Error('Session ended during token refresh');
+  }
+}
+
+async function refreshAccessToken(
+  baseUrl: string,
+  revision: number,
+): Promise<string> {
   const refreshToken = await secureStorageService.getSensitiveData(REFRESH_TOKEN_KEY);
+  ensureSessionRevision(revision);
   if (!refreshToken) {
     throw new Error('Refresh token is not available');
   }
@@ -78,11 +103,13 @@ async function refreshAccessToken(baseUrl: string): Promise<string> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
   });
+  ensureSessionRevision(revision);
   if (!response.ok) {
     throw new Error(`Token refresh failed with ${response.status}`);
   }
 
   const payload: unknown = await response.json();
+  ensureSessionRevision(revision);
   const rotatedRefreshToken =
     typeof payload === 'object' && payload !== null && 'refreshToken' in payload
       ? payload.refreshToken
@@ -99,15 +126,24 @@ async function refreshAccessToken(baseUrl: string): Promise<string> {
     throw new Error('Token refresh response contract mismatch');
   }
 
-  await secureStorageService.saveSensitiveData(ACCESS_TOKEN_KEY, payload.accessToken);
-  if (
-    typeof rotatedRefreshToken === 'string' &&
-    rotatedRefreshToken.length > 0
-  ) {
-    await secureStorageService.saveSensitiveData(
-      REFRESH_TOKEN_KEY,
-      rotatedRefreshToken,
-    );
+  try {
+    await secureStorageService.saveSensitiveData(ACCESS_TOKEN_KEY, payload.accessToken);
+    ensureSessionRevision(revision);
+    if (
+      typeof rotatedRefreshToken === 'string' &&
+      rotatedRefreshToken.length > 0
+    ) {
+      await secureStorageService.saveSensitiveData(
+        REFRESH_TOKEN_KEY,
+        rotatedRefreshToken,
+      );
+    }
+    ensureSessionRevision(revision);
+  } catch (error) {
+    if (revision !== sessionRevision) {
+      await clearBackendTokens();
+    }
+    throw error;
   }
   return payload.accessToken;
 }
@@ -115,12 +151,15 @@ async function refreshAccessToken(baseUrl: string): Promise<string> {
 async function getAccessTokenAfterUnauthorized(
   rejectedToken: string,
   baseUrl: string,
+  revision: number,
 ): Promise<string> {
+  ensureSessionRevision(revision);
   if (refreshPromise) {
     return refreshPromise;
   }
 
   const currentToken = await secureStorageService.getSensitiveData(ACCESS_TOKEN_KEY);
+  ensureSessionRevision(revision);
   if (refreshPromise) {
     return refreshPromise;
   }
@@ -128,22 +167,27 @@ async function getAccessTokenAfterUnauthorized(
     return currentToken;
   }
 
-  refreshPromise = refreshAccessToken(baseUrl)
+  const activeRefresh = refreshAccessToken(baseUrl, revision)
     .catch(async (refreshError: unknown) => {
-      try {
-        await clearSession();
-      } catch (cleanupError: unknown) {
-        throw new AggregateError(
-          [refreshError, cleanupError],
-          'Token refresh failed and session cleanup was incomplete',
-        );
+      if (revision === sessionRevision) {
+        try {
+          await clearSession(revision);
+        } catch (cleanupError: unknown) {
+          throw new AggregateError(
+            [refreshError, cleanupError],
+            'Token refresh failed and session cleanup was incomplete',
+          );
+        }
       }
       throw refreshError;
     })
     .finally(() => {
-      refreshPromise = null;
+      if (refreshPromise === activeRefresh) {
+        refreshPromise = null;
+      }
     });
-  return refreshPromise;
+  refreshPromise = activeRefresh;
+  return activeRefresh;
 }
 
 /**
@@ -157,7 +201,9 @@ export async function getAuthenticated(
     throw new Error('Authenticated path must start with "/"');
   }
 
+  const requestRevision = sessionRevision;
   const accessToken = await secureStorageService.getSensitiveData(ACCESS_TOKEN_KEY);
+  ensureSessionRevision(requestRevision);
   if (!accessToken) {
     throw new Error('Access token is not available');
   }
@@ -167,16 +213,23 @@ export async function getAuthenticated(
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
+  ensureSessionRevision(requestRevision);
   if (response.status !== 401) {
     return response;
   }
 
-  const newAccessToken = await getAccessTokenAfterUnauthorized(accessToken, baseUrl);
+  const newAccessToken = await getAccessTokenAfterUnauthorized(
+    accessToken,
+    baseUrl,
+    requestRevision,
+  );
+  ensureSessionRevision(requestRevision);
   const retryResponse = await fetch(url, {
     headers: { Authorization: `Bearer ${newAccessToken}` },
   });
+  ensureSessionRevision(requestRevision);
   if (retryResponse.status === 401) {
-    await clearSession();
+    await clearSession(requestRevision);
   }
   return retryResponse;
 }

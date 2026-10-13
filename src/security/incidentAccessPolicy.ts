@@ -43,7 +43,7 @@ export function canResolveIncident(
 ): boolean {
   if (actor.role !== 'technician') return false;
   if (incident.assignedTechnicianId !== actor.id) return false;
-  return incident.status !== 'closed' && incident.status !== 'resolved';
+  return incident.status === 'in_progress';
 }
 
 export function canCloseIncident(
@@ -51,7 +51,7 @@ export function canCloseIncident(
   incident: ProtectedIncident,
 ): boolean {
   if (actor.role !== 'coordinator') return false;
-  return incident.status !== 'closed';
+  return incident.status === 'resolved';
 }
 
 export function canReopenIncident(
@@ -59,7 +59,7 @@ export function canReopenIncident(
   incident: ProtectedIncident,
 ): boolean {
   if (actor.role !== 'coordinator') return false;
-  return incident.status === 'closed';
+  return incident.status === 'closed' || incident.status === 'resolved';
 }
 
 export function authorizeIncidentAction(
@@ -78,7 +78,14 @@ export function authorizeIncidentAction(
 
   if (action === 'resolve') {
     if (canResolveIncident(actor, incident)) return { allowed: true };
-    return { allowed: false, reason: 'not_assigned_technician' };
+    return {
+      allowed: false,
+      reason:
+        actor.role === 'technician' &&
+        incident.assignedTechnicianId === actor.id
+          ? 'invalid_state'
+          : 'not_assigned_technician',
+    };
   }
 
   if (action === 'close') {
