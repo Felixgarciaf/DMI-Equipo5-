@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "week": 8,
+  "teamId": "Equipo-05",
+  "members": [
+    {
+      "studentId": "3523110172",
+      "commitShas": [
+        "dee7a57d2dc4087a8befdae7123a13f100590c0a",
+        "324aed2e6837b05fc1411459758aebbba1efcec4",
+        "8c1768c6ff7fa54c87ceaffef703848dba3d0584"
+      ],
+      "files": [
+        "src/course-evaluation/index.ts",
+        "course-tests/week-08/resolve-sync.test.ts",
+        "course-tests/week-08/deduplicate-operations.test.ts",
+        "docs/sync-policy.md",
+        "evidence/week-08/individual.json"
+      ],
+      "tests": [
+        "course-tests/public/week-08.test.ts",
+        "course-tests/week-08/resolve-sync.test.ts",
+        "course-tests/week-08/deduplicate-operations.test.ts"
+      ],
+      "reviews": [
+        "Verificación de inmutabilidad de entradas base/local/remote y comparación canónica por contenido JSON en resolveSync y deduplicateOperations."
+      ],
+      "prediction": "Se esperaba que resolveSync combine cambios independientes sin falsos conflictos, detecte conflictos ordenados alfabéticamente comparando por contenido JSON y que deduplicateOperations conserve la primera operación por operationId sin mutar la entrada ni duplicar efectos al reintentar.",
+      "command": "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
+      "observedResult": "PASS - 3 suites pasadas (course-tests/public/week-08.test.ts, course-tests/week-08/resolve-sync.test.ts y course-tests/week-08/deduplicate-operations.test.ts), 11 pruebas pasadas de 11 sin errores de TypeScript ni ESLint.",
+      "explanation": "Implementé resolveSync con comparación profunda por contenido JSON canónico y ordenamiento alfabético de campos en conflicto, así como deduplicateOperations preservando la primera aparición de cada operationId de forma inmutable y documentando la política en docs/sync-policy.md."
+    }
+  ]
+}
