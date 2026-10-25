@@ -18,6 +18,7 @@ export function IncidentExplorerScreen({
   const [detail, setDetail] = useState<IncidentDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [detailNotFound, setDetailNotFound] = useState(false);
+  const [storageError, setStorageError] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -27,6 +28,10 @@ export function IncidentExplorerScreen({
 
       setIncidents(items);
       setSelectedId((current) => current ?? items[0]?.id ?? null);
+      setIsLoading(false);
+    }).catch(() => {
+      if (!active) return;
+      setStorageError(true);
       setIsLoading(false);
     });
 
@@ -49,6 +54,10 @@ export function IncidentExplorerScreen({
 
       setDetail(item);
       setDetailNotFound(item === null);
+    }).catch(() => {
+      if (!active) return;
+      setDetail(null);
+      setStorageError(true);
     });
 
     return () => {
@@ -58,6 +67,7 @@ export function IncidentExplorerScreen({
 
   return (
     <View style={styles.screen}>
+      {storageError && <Text accessibilityRole="alert">No fue posible recuperar los datos locales. Vuelve a abrir la aplicacion para reintentar.</Text>}
       <View accessibilityRole="summary" style={styles.header}>
         <Text style={styles.title}>CampusOps</Text>
         <Text>

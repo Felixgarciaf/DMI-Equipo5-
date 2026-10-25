@@ -6,6 +6,7 @@
  */
 
 import * as SecureStore from 'expo-secure-store';
+import { IncidentStorage } from './incidentStorage';
 
 export interface StorageAdapter {
   getItem(key: string): Promise<string | null>;
@@ -41,7 +42,7 @@ class InMemoryStorage implements StorageAdapter {
  */
 class ExpoSecureStorageAdapter implements StorageAdapter {
   async getItem(key: string): Promise<string | null> {
-    return SecureStore.getItemAsync(key);
+    return (await SecureStore.getItemAsync(key)) ?? null;
   }
 
   async setItem(key: string, value: string): Promise<void> {
@@ -54,6 +55,7 @@ class ExpoSecureStorageAdapter implements StorageAdapter {
 }
 
 export class SecurityStorageService {
+  readonly incidents: IncidentStorage;
   private secureStorage: StorageAdapter;
   private standardStorage: StorageAdapter;
 
@@ -63,6 +65,7 @@ export class SecurityStorageService {
   ) {
     this.secureStorage = secureAdapter ?? new ExpoSecureStorageAdapter();
     this.standardStorage = standardAdapter ?? new InMemoryStorage();
+    this.incidents = new IncidentStorage(this.secureStorage);
   }
 
   /**
