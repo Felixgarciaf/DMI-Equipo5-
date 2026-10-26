@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "week": 8,
+  "teamId": "Equipo-05",
+  "members": [
+    {
+      "studentId": "3522110305",
+      "commitShas": [
+        "e25ae640a9525dc16089b254df276ce20b695400"
+      ],
+      "files": [
+        "src/security/incidentStorage.ts",
+        "src/security/secureStorage.ts",
+        "src/campusops/bootstrap.ts",
+        "src/campusops/infrastructure/inMemoryIncidentRepository.ts",
+        "src/campusops/ui/IncidentExplorerScreen.tsx",
+        "tests/storage/incidentStorage.test.ts",
+        "tests/storage/restart-worker.cjs",
+        "tests/storage/storageFailureScreen.test.tsx",
+        "docs/data-model.md",
+        "reports/week-08/migration-tests.json"
+      ],
+      "tests": [
+        "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+        "node node_modules/typescript/bin/tsc --noEmit",
+        "npm run backend:self-test",
+        "npm run bundle:release"
+      ],
+      "reviews": [
+        "Inspeccion del servicio existente SecurityStorageService y de las entidades/puertos CampusOps; reutilizacion de su StorageAdapter y conservacion de pruebas de Semana 06."
+      ],
+      "prediction": "La migracion preserva incidencias y operaciones; una interrupcion exige restaurar el snapshot anterior antes de exponer datos; un reinicio recupera la misma identidad y contenido pendientes.",
+      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+      "observedResult": "PASS: 13 suites y 52 pruebas, incluidas 12 de almacenamiento, 1 de error en pantalla y regresion de sesion/permisos/refresh. Typecheck, lint de archivos versionados, backend:self-test y bundle:release pasan. Dos procesos separados recuperan la misma cola. Las 3 pruebas publicas de sincronizacion Week 08 siguen fallando antes de integrar la parte de Felix.",
+      "explanation": "Implemente migracion v1->v2 y journal de rollback sobre el StorageAdapter seguro existente, con bloqueo por adaptador, validacion y lectura integrada en lista/detalle. El journal evita exponer candidatos no confirmados y conserva datos/cola. Elegi rollback con snapshot completo frente a actualizaciones por registro: simplifica integridad pero duplica datos y escrituras. Limites: capacidad de SecureStore y reapertura Android sin verificar, fotos solo como referencias sinteticas pendientes; no implemente sincronizacion/conflictos ni captura/copia de fotos. Codex asistio y se verifico con comandos reales. Este archivo contiene solo mi registro: Claudia consolidara los tres integrantes."
+    }
+  ]
+}
