@@ -4,31 +4,35 @@
   "teamId": "Equipo-05",
   "members": [
     {
-      "studentId": "3523110172",
+      "studentId": "3522110305",
       "commitShas": [
-        "dee7a57d2dc4087a8befdae7123a13f100590c0a",
-        "324aed2e6837b05fc1411459758aebbba1efcec4",
-        "8c1768c6ff7fa54c87ceaffef703848dba3d0584"
+        "e25ae640a9525dc16089b254df276ce20b695400"
       ],
       "files": [
-        "src/course-evaluation/index.ts",
-        "course-tests/week-08/resolve-sync.test.ts",
-        "course-tests/week-08/deduplicate-operations.test.ts",
-        "docs/sync-policy.md",
-        "evidence/week-08/individual.json"
+        "src/security/incidentStorage.ts",
+        "src/security/secureStorage.ts",
+        "src/campusops/bootstrap.ts",
+        "src/campusops/infrastructure/inMemoryIncidentRepository.ts",
+        "src/campusops/ui/IncidentExplorerScreen.tsx",
+        "tests/storage/incidentStorage.test.ts",
+        "tests/storage/restart-worker.cjs",
+        "tests/storage/storageFailureScreen.test.tsx",
+        "docs/data-model.md",
+        "reports/week-08/migration-tests.json"
       ],
       "tests": [
-        "course-tests/public/week-08.test.ts",
-        "course-tests/week-08/resolve-sync.test.ts",
-        "course-tests/week-08/deduplicate-operations.test.ts"
+        "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+        "node node_modules/typescript/bin/tsc --noEmit",
+        "npm run backend:self-test",
+        "npm run bundle:release"
       ],
       "reviews": [
-        "Verificación de inmutabilidad de entradas base/local/remote y comparación canónica por contenido JSON en resolveSync y deduplicateOperations."
+        "Inspeccion del servicio existente SecurityStorageService y de las entidades/puertos CampusOps; reutilizacion de su StorageAdapter y conservacion de pruebas de Semana 06."
       ],
-      "prediction": "Se esperaba que resolveSync combine cambios independientes sin falsos conflictos, detecte conflictos ordenados alfabéticamente comparando por contenido JSON y que deduplicateOperations conserve la primera operación por operationId sin mutar la entrada ni duplicar efectos al reintentar.",
-      "command": "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
-      "observedResult": "PASS - 3 suites pasadas (course-tests/public/week-08.test.ts, course-tests/week-08/resolve-sync.test.ts y course-tests/week-08/deduplicate-operations.test.ts), 11 pruebas pasadas de 11 sin errores de TypeScript ni ESLint.",
-      "explanation": "Implementé resolveSync con comparación profunda por contenido JSON canónico y ordenamiento alfabético de campos en conflicto, así como deduplicateOperations preservando la primera aparición de cada operationId de forma inmutable y documentando la política en docs/sync-policy.md."
+      "prediction": "La migracion preserva incidencias y operaciones; una interrupcion exige restaurar el snapshot anterior antes de exponer datos; un reinicio recupera la misma identidad y contenido pendientes.",
+      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+      "observedResult": "PASS: 13 suites y 52 pruebas, incluidas 12 de almacenamiento, 1 de error en pantalla y regresion de sesion/permisos/refresh. Typecheck, lint de archivos versionados, backend:self-test y bundle:release pasan. Dos procesos separados recuperan la misma cola. Las 3 pruebas publicas de sincronizacion Week 08 siguen fallando antes de integrar la parte de Felix.",
+      "explanation": "Implemente migracion v1->v2 y journal de rollback sobre el StorageAdapter seguro existente, con bloqueo por adaptador, validacion y lectura integrada en lista/detalle. El journal evita exponer candidatos no confirmados y conserva datos/cola. Elegi rollback con snapshot completo frente a actualizaciones por registro: simplifica integridad pero duplica datos y escrituras. Limites: capacidad de SecureStore y reapertura Android sin verificar, fotos solo como referencias sinteticas pendientes; no implemente sincronizacion/conflictos ni captura/copia de fotos. Codex asistio y se verifico con comandos reales. Este archivo contiene solo mi registro: Claudia consolidara los tres integrantes."
     }
   ]
 }

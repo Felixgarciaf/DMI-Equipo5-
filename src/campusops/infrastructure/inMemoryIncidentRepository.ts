@@ -1,5 +1,6 @@
 import type { IncidentDetail, IncidentListItem } from '../domain/incident';
 import type { IncidentRepository } from '../domain/ports';
+import type { IncidentStorage } from '../../security/incidentStorage';
 
 const INCIDENTS: readonly IncidentDetail[] = [
   {
@@ -57,16 +58,21 @@ function toListItem(incident: IncidentDetail): IncidentListItem {
 export class InMemoryIncidentRepository implements IncidentRepository {
   private readonly incidents: readonly IncidentDetail[];
 
-  constructor(seed: readonly IncidentDetail[] = INCIDENTS) {
+  constructor(
+    seed: readonly IncidentDetail[] = INCIDENTS,
+    private readonly storage?: IncidentStorage,
+  ) {
     this.incidents = seed;
   }
 
   async list(): Promise<readonly IncidentListItem[]> {
-    return this.incidents.map(toListItem);
+    const incidents = this.storage ? (await this.storage.read(this.incidents)).incidents : this.incidents;
+    return incidents.map(toListItem);
   }
 
   async findById(id: string): Promise<IncidentDetail | null> {
-    return this.incidents.find((incident) => incident.id === id) ?? null;
+    const incidents = this.storage ? (await this.storage.read(this.incidents)).incidents : this.incidents;
+    return incidents.find((incident) => incident.id === id) ?? null;
   }
 }
 
