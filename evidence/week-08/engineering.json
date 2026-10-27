@@ -1,0 +1,41 @@
+{
+    "schemaVersion":  1,
+    "week":  8,
+    "commitSha":  "55ebb6b48602cbb4677d8f0b1630929055897f9b",
+    "decision":  "Mantener separadas la resolucion de conflictos de sincronizacion y la persistencia de la cola de operaciones. Resolver cambios independientes sin perder la intencion local, detectar conflictos sobre el mismo campo y conservar la cola persistente hasta confirmar una escritura o sincronizacion valida.",
+    "alternatives":  [
+                         "Resolver conflictos por campo y deduplicar operaciones mediante operationId estable: combina cambios independientes y evita repetir operaciones, aunque requiere comparar estados y conservar la identidad de cada operación.",
+                         "Reemplazar el registro completo con el estado remoto: simplifica la actualización, pero puede perder cambios locales y asignaciones que todavía deben preservarse.",
+                         "Migrar el almacenamiento mediante snapshot y journal de rollback: permite recuperar el estado anterior ante escrituras interrumpidas, a costa de escrituras adicionales y mayor uso de almacenamiento."
+                     ],
+    "tradeoff":  "Se priorizan integridad, recuperacion y comportamiento idempotente sobre minimizar escrituras. Las pruebas confirman los escenarios ejecutados; la evidencia no demuestra una prueba en dispositivo Android ni la carga real de fotografiass.",
+    "requirementIds":  [
+                           "AC-01",
+                           "AC-02",
+                           "AC-03",
+                           "AC-04",
+                           "AC-05"
+                       ],
+    "verification":  [
+                         {
+                             "command":  "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
+                             "result":  "PASS: 3 suites y 11 pruebas aprobadas.",
+                             "evidence":  "Las pruebas publicas de Semana 8 y las pruebas unitarias de resolveSync y deduplicateOperations pasaron."
+                         },
+                         {
+                             "command":  "npx jest --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                             "result":  "PASS: 13 suites y 52 pruebas aprobadas.",
+                             "evidence":  "Migracion, recuperacion tras fallos, persistencia entre procesos, seguridad, sesion y regresion de Semana 6."
+                         },
+                         {
+                             "command":  "npm run typecheck",
+                             "result":  "PASS: finalizo sin errores.",
+                             "evidence":  "La comprobacion de tipos de TypeScript termino con codigo de salida 0."
+                         },
+                         {
+                             "command":  "npm run backend:self-test",
+                             "result":  "PASS: contratos del backend aprobados.",
+                             "evidence":  "Se verificaron roles, conflicto de reasignacion, respuesta perdida, idempotencia, evidencias y geocodificacion."
+                         }
+                     ]
+}
