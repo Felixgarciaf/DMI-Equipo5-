@@ -1,486 +1,486 @@
 {
-  "schemaVersion": 1,
-  "week": 8,
-  "commitSha": "e25ae640a9525dc16089b254df276ce20b695400",
-  "generatedAt": "2026-10-25T08:32:27.226303+00:00",
-  "scope": "Aportacion de Cesar: migraciones, almacenamiento y recuperacion. No es el cierre de la entrega del equipo.",
-  "runtime": "Node.js 22.22.0, Windows; ejecutable temporal verificado con SHASUMS256 oficial.",
-  "checks": [
-    {
-      "id": "migration-nominal",
-      "status": "pass",
-      "scenarioType": "nominal",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
-      "evidence": "MIGRATION_NOMINAL: esquema 1 -> 2; incidents y pendingOperations conservados exactamente como incidents y operations. Journal eliminado tras confirmar.",
-      "observed": {
-        "before": {
-          "schemaVersion": 1,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "pendingOperations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        "after": {
-          "schemaVersion": 2,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "operations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "migration-interrupted-write",
-      "status": "pass",
-      "scenarioType": "failure",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
-      "evidence": "Falla real inyectada en setItem de snapshot: 'Injected storage write failure'. Antes: esquema 1. En la falla: snapshot anterior intacto y journal pendiente. Reapertura: rollback y migracion a esquema 2 con mismos datos.",
-      "observed": {
-        "before": {
-          "schemaVersion": 1,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "pendingOperations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        "atFailure": {
-          "schemaVersion": 1,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "pendingOperations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        "afterRecovery": {
-          "schemaVersion": 2,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "operations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "migration-interrupted-commit-recovery",
-      "status": "pass",
-      "scenarioType": "failure",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
-      "evidence": "Falla real en removeItem del journal: 'Injected interruption before commit'. Candidato escrito pero no confirmado. Una restauracion bloqueada lanza error y conserva journal; al recuperar se verifican escrituras de esquema [2,1,2] y datos originales.",
-      "observed": {
-        "before": {
-          "schemaVersion": 1,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "pendingOperations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        "atFailure": {
-          "candidate": {
-            "schemaVersion": 2,
-            "incidents": [
-              {
-                "id": "campus-inc-001",
-                "title": "Fuga ficticia",
-                "category": "water",
-                "status": "assigned",
-                "priority": "high",
-                "locationLabel": "Laboratorio B",
-                "description": "Caso sintetico",
-                "reporterRole": "reporter",
-                "assignedRole": "technician",
-                "location": {
-                  "source": "manual",
-                  "label": "Laboratorio B"
-                },
-                "version": 3
-              }
-            ],
-            "operations": [
-              {
-                "operationId": "op-offline-001",
-                "incidentId": "campus-inc-001",
-                "baseVersion": 3,
-                "actorId": "technician-1",
-                "action": "start_attention",
-                "payload": {
-                  "notes": "Atencion iniciada sin red",
-                  "photos": [
-                    {
-                      "uri": "file:///pending/photo-001.jpg",
-                      "status": "pending_upload"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          "journalPresent": true
-        },
-        "recoveryWrites": [
-          2,
-          1,
-          2
-        ],
-        "afterRecovery": {
-          "schemaVersion": 2,
-          "incidents": [
-            {
-              "id": "campus-inc-001",
-              "title": "Fuga ficticia",
-              "category": "water",
-              "status": "assigned",
-              "priority": "high",
-              "locationLabel": "Laboratorio B",
-              "description": "Caso sintetico",
-              "reporterRole": "reporter",
-              "assignedRole": "technician",
-              "location": {
-                "source": "manual",
-                "label": "Laboratorio B"
-              },
-              "version": 3
-            }
-          ],
-          "operations": [
-            {
-              "operationId": "op-offline-001",
-              "incidentId": "campus-inc-001",
-              "baseVersion": 3,
-              "actorId": "technician-1",
-              "action": "start_attention",
-              "payload": {
-                "notes": "Atencion iniciada sin red",
-                "photos": [
-                  {
-                    "uri": "file:///pending/photo-001.jpg",
-                    "status": "pending_upload"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "persistent-queue-process-restart",
-      "status": "pass",
-      "scenarioType": "boundary",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
-      "evidence": "Dos procesos Node separados con adaptador de disco temporal: el primero guarda y termina; el segundo abre sin memoria compartida. Snapshots iguales; operationId=op-offline-001, incidentId=campus-inc-001, actorId=technician-1, baseVersion=3, notas y referencia pending_upload conservados. No acredita carga de la foto ni ejecucion en Android.",
-      "observed": {
-        "schemaVersion": 2,
-        "incidents": [
-          {
-            "id": "campus-inc-001",
-            "title": "Fuga ficticia",
-            "category": "water",
-            "status": "assigned",
-            "priority": "high",
-            "locationLabel": "Laboratorio B",
-            "description": "Caso sintetico",
-            "reporterRole": "reporter",
-            "assignedRole": "technician",
-            "location": {
-              "source": "manual",
-              "label": "Laboratorio B"
-            },
-            "version": 3
-          }
-        ],
-        "operations": [
-          {
-            "operationId": "op-offline-001",
-            "incidentId": "campus-inc-001",
-            "baseVersion": 3,
-            "actorId": "technician-1",
-            "action": "start_attention",
-            "payload": {
-              "notes": "Atencion iniciada sin red",
-              "photos": [
-                {
-                  "uri": "file:///pending/photo-001.jpg",
-                  "status": "pending_upload"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "queue-integrity-and-service-integration",
-      "status": "pass",
-      "scenarioType": "boundary",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
-      "evidence": "12 pruebas de incidentStorage: escrituras concurrentes conservan op-offline-001/op-2/op-3; identidad repetida y referencia huerfana rechazadas sin cambiar estado; JSON invalido, version futura y baseVersion negativa conservados/rechazados; escritura no confirmada revierte; nueva fachada mantiene session_token; repositorio lee incidencia migrada."
-    },
-    {
-      "id": "storage-failure-ui-and-week06-regression",
-      "status": "pass",
-      "scenarioType": "failure",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
-      "evidence": "13 suites PASS, 52 pruebas PASS (12 almacenamiento + 1 error UI + 39 regresion/smoke). Error de almacenamiento se muestra sin promesa rechazada ni datos inventados. Sesion, permisos, logout y refresh compartido siguen pasando."
-    },
-    {
-      "id": "typecheck",
-      "status": "pass",
-      "scenarioType": "nominal",
-      "command": "node node_modules/typescript/bin/tsc --noEmit",
-      "evidence": "Salida vacia, exit 0."
-    },
-    {
-      "id": "changed-files-lint",
-      "status": "pass",
-      "scenarioType": "nominal",
-      "command": "node node_modules/eslint/bin/eslint.js src/security/incidentStorage.ts src/security/secureStorage.ts src/campusops/bootstrap.ts src/campusops/infrastructure/inMemoryIncidentRepository.ts src/campusops/ui/IncidentExplorerScreen.tsx tests/storage",
-      "evidence": "Sin errores ni advertencias en los archivos de la aportacion. Lint adicional de todos los fuentes versionados: exit 0, dos advertencias previas import/first en tests/security/secureStorage.test.ts."
-    },
-    {
-      "id": "architecture",
-      "status": "pass",
-      "scenarioType": "nominal",
-      "command": "node tools/check-architecture-boundaries.mjs",
-      "evidence": "status=pass, checkedFiles=24, violations=[]."
-    },
-    {
-      "id": "backend-regression",
-      "status": "pass",
-      "scenarioType": "nominal",
-      "command": "npm run backend:self-test",
-      "evidence": "CampusOps backend contracts: roles, reassignment conflict, lost response, idempotency, evidence and geocoding PASS. Controlled backend self-test passed."
-    },
-    {
-      "id": "android-export",
-      "status": "pass",
-      "scenarioType": "nominal",
-      "command": "npm run bundle:release",
-      "evidence": "BUNDLE_EXIT=0. Exported: dist/export. Android bundle index-d98f75c8a944064469b6941d5bc2c5b4.hbc, 1.5MB. Exportacion Expo; no APK ni prueba en dispositivo."
-    },
-    {
-      "id": "dependency-critical-gate",
-      "status": "pass",
-      "scenarioType": "boundary",
-      "command": "npm run audit:ci",
-      "evidence": "Exit 0 con umbral critical. npm informa 7 vulnerabilidades high; no se cambiaron dependencias del equipo."
-    },
-    {
-      "id": "team-public-week08-pending",
-      "status": "fail",
-      "scenarioType": "failure",
-      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand course-tests/public/week-08.test.ts",
-      "evidence": "1 suite fallida, 3 pruebas fallidas: resolveSync y deduplicateOperations aun lanzan 'must be implemented in the assigned week' en develop. La implementacion de Felix esta en su rama y no se incorpora a la aportacion de Cesar. Repetir tras integrar."
-    },
-    {
-      "id": "workspace-lint-unrelated-file",
-      "status": "fail",
-      "scenarioType": "failure",
-      "command": "node node_modules/eslint/bin/eslint.js .",
-      "evidence": "Exit 1: 3 errores en tools/build_matriz_roles_favorcitos.mjs (archivo local ajeno no versionado, @oai/artifact-tool no resuelto) y advertencias previas. Se conserva intacto; no viaja en el commit. El lint de fuentes versionados y los nuevos pasa."
-    }
-  ],
-  "limitations": [
-    "Reapertura Android y persistencia del archivo real de fotografia pendientes: solo se verifica referencia sintetica.",
-    "SecureStore y journal guardan snapshots completos; capacidad nativa y volumen de datos deben validarse en dispositivo. Se asumen escrituras individuales integras y un runtime escritor.",
-    "El flujo UI de inicio offline y la confirmacion/sincronizacion remota deben integrarse por el equipo.",
-    "Faltan integracion de sync-policy/resolveSync/deduplicateOperations, decision engineering.json y consolidacion de los tres registros individuales por Claudia.",
-    "GNU Make no esta disponible en esta terminal. Se ejecutaron herramientas directas indicadas; no se afirma que make feedback/verify-week-08/public-test-week-08/evidence-week-08 hayan pasado. No se crea tag final."
-  ],
-  "diagnosticCorrection": {
-    "before": "Al conectar bootstrap, smoke inicial fallo 2 pruebas: el doble de Expo retornaba undefined para una clave ausente y JSON.parse no lo aceptaba.",
-    "correction": "El adaptador Expo normaliza ausencia a null. No se cambian pruebas publicas.",
-    "after": "Smoke y regresion pasan dentro de las 52 pruebas finales."
-  },
-  "aiAssistance": "Codex asistio en implementacion, pruebas y redaccion; resultados extraidos de ejecuciones reales."
+    "schemaVersion":  1,
+    "week":  8,
+    "commitSha":  "55ebb6b48602cbb4677d8f0b1630929055897f9b",
+    "generatedAt":  "2026-10-26T08:46:50.9450738Z",
+    "scope":  "Semana 8 integrada: migraciones, persistencia, recuperacion, sincronizacion y regresion.",
+    "runtime":  "Node.js 22.22.0, Windows; ejecutable temporal verificado con SHASUMS256 oficial.",
+    "checks":  [
+                   {
+                       "id":  "migration-nominal",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                       "evidence":  "MIGRATION_NOMINAL: esquema 1 -\u003e 2; incidents y pendingOperations conservados exactamente como incidents y operations. Journal eliminado tras confirmar.",
+                       "observed":  {
+                                        "before":  {
+                                                       "schemaVersion":  1,
+                                                       "incidents":  [
+                                                                         {
+                                                                             "id":  "campus-inc-001",
+                                                                             "title":  "Fuga ficticia",
+                                                                             "category":  "water",
+                                                                             "status":  "assigned",
+                                                                             "priority":  "high",
+                                                                             "locationLabel":  "Laboratorio B",
+                                                                             "description":  "Caso sintetico",
+                                                                             "reporterRole":  "reporter",
+                                                                             "assignedRole":  "technician",
+                                                                             "location":  {
+                                                                                              "source":  "manual",
+                                                                                              "label":  "Laboratorio B"
+                                                                                          },
+                                                                             "version":  3
+                                                                         }
+                                                                     ],
+                                                       "pendingOperations":  [
+                                                                                 {
+                                                                                     "operationId":  "op-offline-001",
+                                                                                     "incidentId":  "campus-inc-001",
+                                                                                     "baseVersion":  3,
+                                                                                     "actorId":  "technician-1",
+                                                                                     "action":  "start_attention",
+                                                                                     "payload":  {
+                                                                                                     "notes":  "Atencion iniciada sin red",
+                                                                                                     "photos":  [
+                                                                                                                    {
+                                                                                                                        "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                        "status":  "pending_upload"
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                 }
+                                                                                 }
+                                                                             ]
+                                                   },
+                                        "after":  {
+                                                      "schemaVersion":  2,
+                                                      "incidents":  [
+                                                                        {
+                                                                            "id":  "campus-inc-001",
+                                                                            "title":  "Fuga ficticia",
+                                                                            "category":  "water",
+                                                                            "status":  "assigned",
+                                                                            "priority":  "high",
+                                                                            "locationLabel":  "Laboratorio B",
+                                                                            "description":  "Caso sintetico",
+                                                                            "reporterRole":  "reporter",
+                                                                            "assignedRole":  "technician",
+                                                                            "location":  {
+                                                                                             "source":  "manual",
+                                                                                             "label":  "Laboratorio B"
+                                                                                         },
+                                                                            "version":  3
+                                                                        }
+                                                                    ],
+                                                      "operations":  [
+                                                                         {
+                                                                             "operationId":  "op-offline-001",
+                                                                             "incidentId":  "campus-inc-001",
+                                                                             "baseVersion":  3,
+                                                                             "actorId":  "technician-1",
+                                                                             "action":  "start_attention",
+                                                                             "payload":  {
+                                                                                             "notes":  "Atencion iniciada sin red",
+                                                                                             "photos":  [
+                                                                                                            {
+                                                                                                                "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                "status":  "pending_upload"
+                                                                                                            }
+                                                                                                        ]
+                                                                                         }
+                                                                         }
+                                                                     ]
+                                                  }
+                                    }
+                   },
+                   {
+                       "id":  "migration-interrupted-write",
+                       "status":  "pass",
+                       "scenarioType":  "failure",
+                       "command":  "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                       "evidence":  "Falla real inyectada en setItem de snapshot: \u0027Injected storage write failure\u0027. Antes: esquema 1. En la falla: snapshot anterior intacto y journal pendiente. Reapertura: rollback y migracion a esquema 2 con mismos datos.",
+                       "observed":  {
+                                        "before":  {
+                                                       "schemaVersion":  1,
+                                                       "incidents":  [
+                                                                         {
+                                                                             "id":  "campus-inc-001",
+                                                                             "title":  "Fuga ficticia",
+                                                                             "category":  "water",
+                                                                             "status":  "assigned",
+                                                                             "priority":  "high",
+                                                                             "locationLabel":  "Laboratorio B",
+                                                                             "description":  "Caso sintetico",
+                                                                             "reporterRole":  "reporter",
+                                                                             "assignedRole":  "technician",
+                                                                             "location":  {
+                                                                                              "source":  "manual",
+                                                                                              "label":  "Laboratorio B"
+                                                                                          },
+                                                                             "version":  3
+                                                                         }
+                                                                     ],
+                                                       "pendingOperations":  [
+                                                                                 {
+                                                                                     "operationId":  "op-offline-001",
+                                                                                     "incidentId":  "campus-inc-001",
+                                                                                     "baseVersion":  3,
+                                                                                     "actorId":  "technician-1",
+                                                                                     "action":  "start_attention",
+                                                                                     "payload":  {
+                                                                                                     "notes":  "Atencion iniciada sin red",
+                                                                                                     "photos":  [
+                                                                                                                    {
+                                                                                                                        "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                        "status":  "pending_upload"
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                 }
+                                                                                 }
+                                                                             ]
+                                                   },
+                                        "atFailure":  {
+                                                          "schemaVersion":  1,
+                                                          "incidents":  [
+                                                                            {
+                                                                                "id":  "campus-inc-001",
+                                                                                "title":  "Fuga ficticia",
+                                                                                "category":  "water",
+                                                                                "status":  "assigned",
+                                                                                "priority":  "high",
+                                                                                "locationLabel":  "Laboratorio B",
+                                                                                "description":  "Caso sintetico",
+                                                                                "reporterRole":  "reporter",
+                                                                                "assignedRole":  "technician",
+                                                                                "location":  {
+                                                                                                 "source":  "manual",
+                                                                                                 "label":  "Laboratorio B"
+                                                                                             },
+                                                                                "version":  3
+                                                                            }
+                                                                        ],
+                                                          "pendingOperations":  [
+                                                                                    {
+                                                                                        "operationId":  "op-offline-001",
+                                                                                        "incidentId":  "campus-inc-001",
+                                                                                        "baseVersion":  3,
+                                                                                        "actorId":  "technician-1",
+                                                                                        "action":  "start_attention",
+                                                                                        "payload":  {
+                                                                                                        "notes":  "Atencion iniciada sin red",
+                                                                                                        "photos":  [
+                                                                                                                       {
+                                                                                                                           "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                           "status":  "pending_upload"
+                                                                                                                       }
+                                                                                                                   ]
+                                                                                                    }
+                                                                                    }
+                                                                                ]
+                                                      },
+                                        "afterRecovery":  {
+                                                              "schemaVersion":  2,
+                                                              "incidents":  [
+                                                                                {
+                                                                                    "id":  "campus-inc-001",
+                                                                                    "title":  "Fuga ficticia",
+                                                                                    "category":  "water",
+                                                                                    "status":  "assigned",
+                                                                                    "priority":  "high",
+                                                                                    "locationLabel":  "Laboratorio B",
+                                                                                    "description":  "Caso sintetico",
+                                                                                    "reporterRole":  "reporter",
+                                                                                    "assignedRole":  "technician",
+                                                                                    "location":  {
+                                                                                                     "source":  "manual",
+                                                                                                     "label":  "Laboratorio B"
+                                                                                                 },
+                                                                                    "version":  3
+                                                                                }
+                                                                            ],
+                                                              "operations":  [
+                                                                                 {
+                                                                                     "operationId":  "op-offline-001",
+                                                                                     "incidentId":  "campus-inc-001",
+                                                                                     "baseVersion":  3,
+                                                                                     "actorId":  "technician-1",
+                                                                                     "action":  "start_attention",
+                                                                                     "payload":  {
+                                                                                                     "notes":  "Atencion iniciada sin red",
+                                                                                                     "photos":  [
+                                                                                                                    {
+                                                                                                                        "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                        "status":  "pending_upload"
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                 }
+                                                                                 }
+                                                                             ]
+                                                          }
+                                    }
+                   },
+                   {
+                       "id":  "migration-interrupted-commit-recovery",
+                       "status":  "pass",
+                       "scenarioType":  "failure",
+                       "command":  "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                       "evidence":  "Falla real en removeItem del journal: \u0027Injected interruption before commit\u0027. Candidato escrito pero no confirmado. Una restauracion bloqueada lanza error y conserva journal; al recuperar se verifican escrituras de esquema [2,1,2] y datos originales.",
+                       "observed":  {
+                                        "before":  {
+                                                       "schemaVersion":  1,
+                                                       "incidents":  [
+                                                                         {
+                                                                             "id":  "campus-inc-001",
+                                                                             "title":  "Fuga ficticia",
+                                                                             "category":  "water",
+                                                                             "status":  "assigned",
+                                                                             "priority":  "high",
+                                                                             "locationLabel":  "Laboratorio B",
+                                                                             "description":  "Caso sintetico",
+                                                                             "reporterRole":  "reporter",
+                                                                             "assignedRole":  "technician",
+                                                                             "location":  {
+                                                                                              "source":  "manual",
+                                                                                              "label":  "Laboratorio B"
+                                                                                          },
+                                                                             "version":  3
+                                                                         }
+                                                                     ],
+                                                       "pendingOperations":  [
+                                                                                 {
+                                                                                     "operationId":  "op-offline-001",
+                                                                                     "incidentId":  "campus-inc-001",
+                                                                                     "baseVersion":  3,
+                                                                                     "actorId":  "technician-1",
+                                                                                     "action":  "start_attention",
+                                                                                     "payload":  {
+                                                                                                     "notes":  "Atencion iniciada sin red",
+                                                                                                     "photos":  [
+                                                                                                                    {
+                                                                                                                        "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                        "status":  "pending_upload"
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                 }
+                                                                                 }
+                                                                             ]
+                                                   },
+                                        "atFailure":  {
+                                                          "candidate":  {
+                                                                            "schemaVersion":  2,
+                                                                            "incidents":  [
+                                                                                              {
+                                                                                                  "id":  "campus-inc-001",
+                                                                                                  "title":  "Fuga ficticia",
+                                                                                                  "category":  "water",
+                                                                                                  "status":  "assigned",
+                                                                                                  "priority":  "high",
+                                                                                                  "locationLabel":  "Laboratorio B",
+                                                                                                  "description":  "Caso sintetico",
+                                                                                                  "reporterRole":  "reporter",
+                                                                                                  "assignedRole":  "technician",
+                                                                                                  "location":  {
+                                                                                                                   "source":  "manual",
+                                                                                                                   "label":  "Laboratorio B"
+                                                                                                               },
+                                                                                                  "version":  3
+                                                                                              }
+                                                                                          ],
+                                                                            "operations":  [
+                                                                                               {
+                                                                                                   "operationId":  "op-offline-001",
+                                                                                                   "incidentId":  "campus-inc-001",
+                                                                                                   "baseVersion":  3,
+                                                                                                   "actorId":  "technician-1",
+                                                                                                   "action":  "start_attention",
+                                                                                                   "payload":  {
+                                                                                                                   "notes":  "Atencion iniciada sin red",
+                                                                                                                   "photos":  [
+                                                                                                                                  {
+                                                                                                                                      "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                                      "status":  "pending_upload"
+                                                                                                                                  }
+                                                                                                                              ]
+                                                                                                               }
+                                                                                               }
+                                                                                           ]
+                                                                        },
+                                                          "journalPresent":  true
+                                                      },
+                                        "recoveryWrites":  [
+                                                               2,
+                                                               1,
+                                                               2
+                                                           ],
+                                        "afterRecovery":  {
+                                                              "schemaVersion":  2,
+                                                              "incidents":  [
+                                                                                {
+                                                                                    "id":  "campus-inc-001",
+                                                                                    "title":  "Fuga ficticia",
+                                                                                    "category":  "water",
+                                                                                    "status":  "assigned",
+                                                                                    "priority":  "high",
+                                                                                    "locationLabel":  "Laboratorio B",
+                                                                                    "description":  "Caso sintetico",
+                                                                                    "reporterRole":  "reporter",
+                                                                                    "assignedRole":  "technician",
+                                                                                    "location":  {
+                                                                                                     "source":  "manual",
+                                                                                                     "label":  "Laboratorio B"
+                                                                                                 },
+                                                                                    "version":  3
+                                                                                }
+                                                                            ],
+                                                              "operations":  [
+                                                                                 {
+                                                                                     "operationId":  "op-offline-001",
+                                                                                     "incidentId":  "campus-inc-001",
+                                                                                     "baseVersion":  3,
+                                                                                     "actorId":  "technician-1",
+                                                                                     "action":  "start_attention",
+                                                                                     "payload":  {
+                                                                                                     "notes":  "Atencion iniciada sin red",
+                                                                                                     "photos":  [
+                                                                                                                    {
+                                                                                                                        "uri":  "file:///pending/photo-001.jpg",
+                                                                                                                        "status":  "pending_upload"
+                                                                                                                    }
+                                                                                                                ]
+                                                                                                 }
+                                                                                 }
+                                                                             ]
+                                                          }
+                                    }
+                   },
+                   {
+                       "id":  "persistent-queue-process-restart",
+                       "status":  "pass",
+                       "scenarioType":  "boundary",
+                       "command":  "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                       "evidence":  "Dos procesos Node separados con adaptador de disco temporal: el primero guarda y termina; el segundo abre sin memoria compartida. Snapshots iguales; operationId=op-offline-001, incidentId=campus-inc-001, actorId=technician-1, baseVersion=3, notas y referencia pending_upload conservados. No acredita carga de la foto ni ejecucion en Android.",
+                       "observed":  {
+                                        "schemaVersion":  2,
+                                        "incidents":  [
+                                                          {
+                                                              "id":  "campus-inc-001",
+                                                              "title":  "Fuga ficticia",
+                                                              "category":  "water",
+                                                              "status":  "assigned",
+                                                              "priority":  "high",
+                                                              "locationLabel":  "Laboratorio B",
+                                                              "description":  "Caso sintetico",
+                                                              "reporterRole":  "reporter",
+                                                              "assignedRole":  "technician",
+                                                              "location":  {
+                                                                               "source":  "manual",
+                                                                               "label":  "Laboratorio B"
+                                                                           },
+                                                              "version":  3
+                                                          }
+                                                      ],
+                                        "operations":  [
+                                                           {
+                                                               "operationId":  "op-offline-001",
+                                                               "incidentId":  "campus-inc-001",
+                                                               "baseVersion":  3,
+                                                               "actorId":  "technician-1",
+                                                               "action":  "start_attention",
+                                                               "payload":  {
+                                                                               "notes":  "Atencion iniciada sin red",
+                                                                               "photos":  [
+                                                                                              {
+                                                                                                  "uri":  "file:///pending/photo-001.jpg",
+                                                                                                  "status":  "pending_upload"
+                                                                                              }
+                                                                                          ]
+                                                                           }
+                                                           }
+                                                       ]
+                                    }
+                   },
+                   {
+                       "id":  "queue-integrity-and-service-integration",
+                       "status":  "pass",
+                       "scenarioType":  "boundary",
+                       "command":  "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                       "evidence":  "12 pruebas de incidentStorage: escrituras concurrentes conservan op-offline-001/op-2/op-3; identidad repetida y referencia huerfana rechazadas sin cambiar estado; JSON invalido, version futura y baseVersion negativa conservados/rechazados; escritura no confirmada revierte; nueva fachada mantiene session_token; repositorio lee incidencia migrada."
+                   },
+                   {
+                       "id":  "storage-failure-ui-and-week06-regression",
+                       "status":  "pass",
+                       "scenarioType":  "failure",
+                       "command":  "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                       "evidence":  "13 suites PASS, 52 pruebas PASS (12 almacenamiento + 1 error UI + 39 regresion/smoke). Error de almacenamiento se muestra sin promesa rechazada ni datos inventados. Sesion, permisos, logout y refresh compartido siguen pasando."
+                   },
+                   {
+                       "id":  "typecheck",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "node node_modules/typescript/bin/tsc --noEmit",
+                       "evidence":  "Salida vacia, exit 0."
+                   },
+                   {
+                       "id":  "changed-files-lint",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "node node_modules/eslint/bin/eslint.js src/security/incidentStorage.ts src/security/secureStorage.ts src/campusops/bootstrap.ts src/campusops/infrastructure/inMemoryIncidentRepository.ts src/campusops/ui/IncidentExplorerScreen.tsx tests/storage",
+                       "evidence":  "Sin errores ni advertencias en los archivos de la aportacion. Lint adicional de todos los fuentes versionados: exit 0, dos advertencias previas import/first en tests/security/secureStorage.test.ts."
+                   },
+                   {
+                       "id":  "architecture",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "node tools/check-architecture-boundaries.mjs",
+                       "evidence":  "status=pass, checkedFiles=24, violations=[]."
+                   },
+                   {
+                       "id":  "backend-regression",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "npm run backend:self-test",
+                       "evidence":  "CampusOps backend contracts: roles, reassignment conflict, lost response, idempotency, evidence and geocoding PASS. Controlled backend self-test passed."
+                   },
+                   {
+                       "id":  "android-export",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "npm run bundle:release",
+                       "evidence":  "BUNDLE_EXIT=0. Exported: dist/export. Android bundle index-d98f75c8a944064469b6941d5bc2c5b4.hbc, 1.5MB. Exportacion Expo; no APK ni prueba en dispositivo."
+                   },
+                   {
+                       "id":  "dependency-critical-gate",
+                       "status":  "pass",
+                       "scenarioType":  "boundary",
+                       "command":  "npm run audit:ci",
+                       "evidence":  "Exit 0 con umbral critical. npm informa 7 vulnerabilidades high; no se cambiaron dependencias del equipo."
+                   },
+                   {
+                       "id":  "team-public-week08-pending",
+                       "status":  "pass",
+                       "scenarioType":  "nominal",
+                       "command":  "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
+                       "evidence":  "Reejecucion tras integrar las contribuciones: 3 suites y 11 pruebas aprobadas."
+                   },
+                   {
+                       "id":  "workspace-lint-unrelated-file",
+                       "status":  "fail",
+                       "scenarioType":  "failure",
+                       "command":  "node node_modules/eslint/bin/eslint.js .",
+                       "evidence":  "Exit 1: 3 errores en tools/build_matriz_roles_favorcitos.mjs (archivo local ajeno no versionado, @oai/artifact-tool no resuelto) y advertencias previas. Se conserva intacto; no viaja en el commit. El lint de fuentes versionados y los nuevos pasa."
+                   }
+               ],
+    "limitations":  [
+                        "La persistencia de la referencia de fotografía se verificó con datos sintéticos; no se ha demostrado la carga real del archivo ni la ejecución en un dispositivo Android.",
+                        "SecureStore y el journal guardan snapshots completos. La capacidad nativa y el volumen de datos requieren validación en dispositivo; se asumen escrituras individuales íntegras y un único runtime escritor.",
+                        "La integración completa del flujo de inicio offline y la confirmación y sincronización remota debe evaluarse con pruebas específicas; las pruebas públicas de Semana 8 no demuestran por sí solas todo ese flujo.",
+                        "La auditoría de dependencias reporta siete vulnerabilidades de severidad alta. El control configurado pasa con umbral critical; las dependencias no se actualizaron.",
+                        "La verificación global de ESLint conserva un fallo documentado en tools/build_matriz_roles_favorcitos.mjs, archivo local ajeno no versionado. El lint ejecutado para los archivos versionados termina sin errores, con dos advertencias previas."
+                    ],
+    "diagnosticCorrection":  {
+                                 "before":  "Al conectar bootstrap, smoke inicial fallo 2 pruebas: el doble de Expo retornaba undefined para una clave ausente y JSON.parse no lo aceptaba.",
+                                 "correction":  "El adaptador Expo normaliza ausencia a null. No se cambian pruebas publicas.",
+                                 "after":  "Smoke y regresion pasan dentro de las 52 pruebas finales."
+                             },
+    "aiAssistance":  "Codex asistio en implementacion, pruebas y redaccion; resultados extraidos de ejecuciones reales."
 }
