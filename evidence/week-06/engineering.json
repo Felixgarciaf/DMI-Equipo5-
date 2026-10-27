@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "week":  6,
-    "commitSha":  "67c07e7af9aaff7ab99997fbd39d0dc4343bedbd",
+    "commitSha":  "649022226bdd727b2f53a6d40f9f684cde8b5e64",
     "decision":  "La renovacion de sesion se coordina con una politica single-flight: la primera respuesta 401 abre un refresh compartido, las demas solicitudes de la misma generacion se agregan a la cola y solo se reintentan una vez si el refresh termina correctamente. Si el refresh falla o ocurre logout, el estado vuelve a no autenticado y se limpian los tokens persistidos.",
     "alternatives":  [
                          "Permitir que cada solicitud con 401 ejecute su propio refresh y reintento independiente.",
