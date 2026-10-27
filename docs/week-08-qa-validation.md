@@ -22,3 +22,9 @@ Estos hallazgos requieren corregir y volver a validar los artefactos de evidenci
 
 ## Limitaciones
 Los resultados registrados corresponden a los comandos ejecutados directamente. No se afirma que `make public-test-week-08` o `make evidence-week-08` hayan pasado. La entrega final queda pendiente hasta ejecutar las comprobaciones requeridas y validar los tres registros individuales.
+
+## Auditoría de GitHub Actions
+
+Las ejecuciones de los PR #17 y #18 evaluaron HEADs `7da3721` y `5c5275f`; ambos tienen como padre `63d2a41`, mientras que `engineering.json` y `migration-tests.json` todavía referían `55ebb6b`. Ese SHA es el abuelo de cada HEAD, por lo que `course_public_evaluator.py` rechaza la evidencia. `fetch-depth: 0` y `fetch-tags: true` permiten inspeccionar padres y etiquetas, pero no corrigen un SHA de evidencia obsoleto.
+
+AC-03 exige que el HEAD evaluado sea exactamente `week-08-final`. Para conservar el tag entregado (`63d2a41`) y seguir probando cada PR en su propio HEAD, el workflow evalúa AC-03 en un checkout separado del tag, con historial completo. Así no se reetiqueta ni se presenta el HEAD del PR como la entrega final.
