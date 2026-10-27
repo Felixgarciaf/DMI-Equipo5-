@@ -1,8 +1,8 @@
 {
     "schemaVersion":  1,
     "week":  8,
-    "commitSha":  "e82043e0f3f98a3405b2f2556a4a7702550d68aa",
-    "generatedAt":  "2026-10-27T05:15:39.2069290Z",
+    "commitSha":  "6778bfe51f6ee2a2b31edefb5570bf336a89dd69",
+    "generatedAt":  "2026-10-27T05:40:36.0946402Z",
     "scope":  "Semana 8 integrada: migraciones, persistencia, recuperacion, sincronizacion y regresion.",
     "runtime":  "Node.js 22.22.0, Windows; ejecutable temporal verificado con SHASUMS256 oficial.",
     "checks":  [
