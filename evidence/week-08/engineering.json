@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "week":  8,
-    "commitSha":  "55ebb6b48602cbb4677d8f0b1630929055897f9b",
+    "commitSha":  "e82043e0f3f98a3405b2f2556a4a7702550d68aa",
     "decision":  "Mantener separadas la resolucion de conflictos de sincronizacion y la persistencia de la cola de operaciones. Resolver cambios independientes sin perder la intencion local, detectar conflictos sobre el mismo campo y conservar la cola persistente hasta confirmar una escritura o sincronizacion valida.",
     "alternatives":  [
                          "Resolver conflictos por campo y deduplicar operaciones mediante operationId estable: combina cambios independientes y evita repetir operaciones, aunque requiere comparar estados y conservar la identidad de cada operación.",
