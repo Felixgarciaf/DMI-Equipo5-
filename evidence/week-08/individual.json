@@ -1,0 +1,86 @@
+{
+    "schemaVersion":  1,
+    "week":  8,
+    "teamId":  "Equipo-05",
+    "members":  [
+                    {
+                        "studentId":  "3523110172",
+                        "commitShas":  [
+                                           "dee7a57d2dc4087a8befdae7123a13f100590c0a",
+                                           "324aed2e6837b05fc1411459758aebbba1efcec4",
+                                           "8c1768c6ff7fa54c87ceaffef703848dba3d0584"
+                                       ],
+                        "files":  [
+                                      "src/course-evaluation/index.ts",
+                                      "course-tests/week-08/resolve-sync.test.ts",
+                                      "course-tests/week-08/deduplicate-operations.test.ts",
+                                      "docs/sync-policy.md"
+                                  ],
+                        "tests":  [
+                                      "course-tests/public/week-08.test.ts",
+                                      "course-tests/week-08/resolve-sync.test.ts",
+                                      "course-tests/week-08/deduplicate-operations.test.ts"
+                                  ],
+                        "reviews":  [
+                                        "Verificacion de inmutabilidad de las entradas base, local y remota; comparacion canonica por contenido JSON y deduplicacion por operationId."
+                                    ],
+                        "prediction":  "Los cambios independientes deben combinarse sin falsos conflictos, los conflictos del mismo campo deben detectarse y las operaciones repetidas deben deduplicarse sin mutar la entrada.",
+                        "command":  "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
+                        "observedResult":  "PASS: 3 suites y 11 pruebas aprobadas en la rama integrada.",
+                        "explanation":  "Implementacion de resolveSync y deduplicateOperations, con comparacion profunda por contenido JSON, ordenamiento de conflictos y conservacion de la primera aparicion de cada operationId."
+                    },
+                    {
+                        "studentId":  "3522110305",
+                        "commitShas":  [
+                                           "e25ae640a9525dc16089b254df276ce20b695400"
+                                       ],
+                        "files":  [
+                                      "src/security/incidentStorage.ts",
+                                      "src/security/secureStorage.ts",
+                                      "src/campusops/bootstrap.ts",
+                                      "src/campusops/infrastructure/inMemoryIncidentRepository.ts",
+                                      "src/campusops/ui/IncidentExplorerScreen.tsx",
+                                      "tests/storage/incidentStorage.test.ts",
+                                      "tests/storage/restart-worker.cjs",
+                                      "tests/storage/storageFailureScreen.test.tsx",
+                                      "docs/data-model.md"
+                                  ],
+                        "tests":  [
+                                      "tests/storage/incidentStorage.test.ts",
+                                      "tests/storage/storageFailureScreen.test.tsx",
+                                      "tests/security",
+                                      "course-tests/smoke.test.tsx",
+                                      "course-tests/public/week-06.test.ts"
+                                  ],
+                        "reviews":  [
+                                        "Revision de la migracion de esquema v1 a v2, del journal de rollback, de la persistencia de la cola y de la recuperacion despues de fallos de escritura."
+                                    ],
+                        "prediction":  "La migracion debe conservar incidencias y operaciones pendientes; ante una escritura interrumpida, la recuperacion debe preservar los datos y permitir reabrir la cola.",
+                        "command":  "npx jest --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                        "observedResult":  "PASS en la ejecucion integrada: 13 suites y 52 pruebas aprobadas. Tambien finalizaron correctamente npm run typecheck y npm run backend:self-test.",
+                        "explanation":  "La contribucion implementa migracion persistente y recuperacion mediante snapshot y journal sobre el adaptador de almacenamiento existente. La evidencia de reinicio utiliza procesos separados y referencias sinteticas de fotografias; no acredita una prueba en dispositivo Android."
+                    },
+                    {
+                        "studentId":  "3522110551",
+                        "commitShas":  [
+                                           "55ebb6b48602cbb4677d8f0b1630929055897f9b"
+                                       ],
+                        "files":  [
+                                      "docs/week-08-qa-validation.md"
+                                  ],
+                        "tests":  [
+                                      "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
+                                      "npx jest --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/storage tests/security course-tests/smoke.test.tsx course-tests/public/week-06.test.ts",
+                                      "npm run typecheck",
+                                      "npm run backend:self-test"
+                                  ],
+                        "reviews":  [
+                                        "Integracion de las contribuciones de Felix y Cesar, revision de los contratos de evidencia, deteccion de registros incompletos y preparacion de la validacion final."
+                                    ],
+                        "prediction":  "La integracion debe conservar el comportamiento de sincronizacion, almacenamiento y seguridad; las evidencias deben identificar a los tres integrantes y referenciar SHA verificables.",
+                        "command":  "npx jest --ci --runInBand course-tests/public/week-08.test.ts course-tests/week-08/resolve-sync.test.ts course-tests/week-08/deduplicate-operations.test.ts",
+                        "observedResult":  "PASS: 3 suites y 11 pruebas. La regresion adicional termino con 13 suites y 52 pruebas aprobadas; typecheck y backend:self-test tambien finalizaron correctamente.",
+                        "explanation":  "Consolidacion de QA y revision de integracion documentada en docs/week-08-qa-validation.md. El commit referenciado identifica esa contribucion de documentacion; la consolidacion final de evidencias todavia debe validarse con el evaluador publico."
+                    }
+                ]
+}
