@@ -64,6 +64,163 @@ const getEnvBackendUrl = (): string => {
   return process.env.EXPO_PUBLIC_COURSE_BACKEND_URL ?? 'http://127.0.0.1:4310';
 };
 
+export type RetryInput = Readonly<{
+  method: 'GET' | 'POST';
+  status: number | 'timeout';
+  attempt: number;
+  retryAfterMs?: number;
+  idempotencyKey?: string;
+}>;
+
+export type RetrySettings = Readonly<{
+  maxAttempts?: number;
+  baseDelayMs?: number;
+  maxBackoffMs?: number;
+}>;
+
+const MAX_TIMER_MS = 2_147_483_647;
+
+function retrySettings(settings: RetrySettings = {}) {
+  const maxAttempts = settings.maxAttempts ?? 4;
+  const baseDelayMs = settings.baseDelayMs ?? 250;
+  const maxBackoffMs = settings.maxBackoffMs ?? 4000;
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 4 ||
+      !Number.isFinite(baseDelayMs) || baseDelayMs <= 0 ||
+      !Number.isFinite(maxBackoffMs) || maxBackoffMs < baseDelayMs || maxBackoffMs > MAX_TIMER_MS) {
+    throw new RangeError('Invalid bounded retry settings');
+  }
+  return { maxAttempts, baseDelayMs, maxBackoffMs };
+}
+
+function stableKey(value: string | undefined): value is string {
+  return typeof value === 'string' && value.trim().length >= 8;
+}
+
+/** Shared by real HTTP requests and the evaluation adapter. Attempt 1 is the first send. */
+export function planBackendRetry(input: RetryInput, settings: RetrySettings = {}) {
+  const config = retrySettings(settings);
+  const requiresStableIdempotencyKey = input.method === 'POST' && !stableKey(input.idempotencyKey);
+  const stop = { retry: false, delayMs: 0, requiresStableIdempotencyKey };
+  if (requiresStableIdempotencyKey || !Number.isInteger(input.attempt) ||
+      input.attempt < 1 || input.attempt >= config.maxAttempts ||
+      !(input.status === 'timeout' || [408, 429, 500, 502, 503, 504].includes(input.status))) return stop;
+  const backoff = Math.min(config.maxBackoffMs, config.baseDelayMs * 2 ** (input.attempt - 1));
+  const retryAfter = input.retryAfterMs;
+  const delayMs = Math.ceil(typeof retryAfter === 'number' && Number.isFinite(retryAfter) && retryAfter >= 0
+    ? Math.max(backoff, retryAfter) : backoff);
+  // Never shorten a valid provider wait to fit a JS timer (which could wrap to 1ms).
+  if (!Number.isFinite(delayMs) || delayMs > MAX_TIMER_MS) return stop;
+  return { retry: true, delayMs, requiresStableIdempotencyKey: false };
+}
+
+export function parseRetryAfter(value: string | null, now = Date.now()): number | undefined {
+  if (value === null || !value.trim()) return undefined;
+  const header = value.trim();
+  if (/^\d+$/.test(header)) {
+    const ms = Number(header) * 1000;
+    return Number.isFinite(ms) ? ms : undefined;
+  }
+  // An HTTP date, not a loosely parsed numeric string such as '-1' or '1.5'.
+  if (!/^[A-Za-z]{3}, /.test(header)) return undefined;
+  const date = Date.parse(header);
+  return Number.isFinite(date) && Number.isFinite(now) ? Math.max(0, date - now) : undefined;
+}
+
+export type BackendRequestOptions = Readonly<{
+  method?: 'GET' | 'POST';
+  headers?: Readonly<Record<string, string>>;
+  body?: unknown;
+  idempotencyKey?: string;
+  timeoutMs?: number;
+  retry?: RetrySettings;
+}>;
+
+export class BackendRequestError extends Error {
+  constructor(readonly kind: 'timeout' | 'network' | 'idempotency', message: string) {
+    super(message);
+    this.name = 'BackendRequestError';
+  }
+}
+
+async function timedFetch(url: string, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new BackendRequestError('timeout', 'Backend request timed out'));
+      controller.abort();
+    }, timeoutMs);
+  });
+  try {
+    return await Promise.race([fetch(url, { ...init, signal: controller.signal }), timeout]);
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
+}
+
+async function performBackendRequest(
+  path: string,
+  options: BackendRequestOptions,
+  baseUrl: string,
+  budget = { attempts: 0 },
+  ensureActive: () => void = () => undefined,
+): Promise<Response> {
+  if (!path.startsWith('/') || path.startsWith('//')) throw new Error('Backend path must start with a single "/"');
+  const config = retrySettings(options.retry);
+  const timeoutMs = options.timeoutMs ?? 3000;
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > MAX_TIMER_MS) throw new RangeError('Invalid backend timeout');
+  const method = options.method ?? 'GET';
+  const headers = new Headers(options.headers);
+  const key = options.idempotencyKey ?? headers.get('Idempotency-Key') ?? undefined;
+  if (method === 'POST' && !stableKey(key)) {
+    throw new BackendRequestError('idempotency', 'POST requires a stable Idempotency-Key of at least 8 characters');
+  }
+  if (key !== undefined) headers.set('Idempotency-Key', key);
+  const body = options.body === undefined ? undefined : JSON.stringify(options.body);
+  if (body !== undefined) headers.set('Content-Type', 'application/json');
+  for (;;) {
+    ensureActive();
+    budget.attempts += 1;
+    const started = Date.now();
+    let response: Response | undefined;
+    let failure: BackendRequestError | undefined;
+    try {
+      response = await timedFetch(`${baseUrl}${path}`, {
+        method, headers, ...(body === undefined ? {} : { body }),
+      }, timeoutMs);
+    } catch (error: unknown) {
+      if (error instanceof BackendRequestError) failure = error;
+      else if (error instanceof TypeError) failure = new BackendRequestError('network', 'Backend network request failed');
+      else throw error;
+    }
+    ensureActive();
+    const status = response?.status ?? 'timeout';
+    const retryAfterMs = parseRetryAfter(response?.headers.get('Retry-After') ?? null);
+    const plan = planBackendRetry({
+      method, status, attempt: budget.attempts,
+      ...(key === undefined ? {} : { idempotencyKey: key }),
+      ...(retryAfterMs === undefined ? {} : { retryAfterMs }),
+    }, config);
+    sanitizeLog('Intento de solicitud al backend', {
+      attempt: budget.attempts, status: failure?.kind ?? status,
+      durationMs: Math.max(0, Date.now() - started), delayMs: plan.delayMs,
+    });
+    if (!plan.retry) {
+      if (failure) throw failure;
+      return response!;
+    }
+    await new Promise<void>((resolve) => setTimeout(resolve, plan.delayMs));
+  }
+}
+
+export function requestBackend(
+  path: string,
+  options: BackendRequestOptions = {},
+  baseUrl = getEnvBackendUrl(),
+): Promise<Response> {
+  return performBackendRequest(path, options, baseUrl);
+}
+
 /**
  * Sanitiza la información enviada a consola utilizando el redactor
  * canónico de CampusOps para evitar filtraciones de datos sensibles.
@@ -191,11 +348,12 @@ async function getAccessTokenAfterUnauthorized(
 }
 
 /**
- * Performs an authenticated GET, sharing a single token refresh across concurrent 401 responses.
+ * Performs an authenticated request, sharing a single token refresh across concurrent 401 responses.
  */
-export async function getAuthenticated(
+async function requestAuthenticated(
   path: string,
-  baseUrl = getEnvBackendUrl(),
+  options: BackendRequestOptions,
+  baseUrl: string,
 ): Promise<Response> {
   if (!path.startsWith('/')) {
     throw new Error('Authenticated path must start with "/"');
@@ -209,14 +367,19 @@ export async function getAuthenticated(
   }
   updateSessionStatus('authenticated');
 
-  const url = `${baseUrl}${path}`;
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  const budget = { attempts: 0 };
+  // Snapshot the payload once, including across a 401/token refresh boundary.
+  const prepared = { ...options, headers: { ...options.headers },
+    ...(options.body === undefined ? {} : { body: JSON.parse(JSON.stringify(options.body)) as unknown }) };
+  const send = (token: string) => performBackendRequest(path, {
+    ...prepared, headers: { ...prepared.headers, Authorization: `Bearer ${token}` },
+  }, baseUrl, budget, () => ensureSessionRevision(requestRevision));
+  const response = await send(accessToken);
   ensureSessionRevision(requestRevision);
   if (response.status !== 401) {
     return response;
   }
+  if (budget.attempts >= retrySettings(options.retry).maxAttempts) return response;
 
   const newAccessToken = await getAccessTokenAfterUnauthorized(
     accessToken,
@@ -224,9 +387,7 @@ export async function getAuthenticated(
     requestRevision,
   );
   ensureSessionRevision(requestRevision);
-  const retryResponse = await fetch(url, {
-    headers: { Authorization: `Bearer ${newAccessToken}` },
-  });
+  const retryResponse = await send(newAccessToken);
   ensureSessionRevision(requestRevision);
   if (retryResponse.status === 401) {
     await clearSession(requestRevision);
@@ -234,12 +395,27 @@ export async function getAuthenticated(
   return retryResponse;
 }
 
+export function getAuthenticated(path: string, baseUrl = getEnvBackendUrl()): Promise<Response> {
+  return requestAuthenticated(path, { method: 'GET' }, baseUrl);
+}
+
+/** Use the persisted queue's operationId, never generate a retry key. */
+export function postAuthenticated(
+  path: string,
+  body: unknown,
+  operationId: string,
+  baseUrl = getEnvBackendUrl(),
+  options: Omit<BackendRequestOptions, 'method' | 'body' | 'idempotencyKey'> = {},
+): Promise<Response> {
+  return requestAuthenticated(path, { ...options, method: 'POST', body, idempotencyKey: operationId }, baseUrl);
+}
+
 export async function getBackendHealth(
   baseUrl = process.env.EXPO_PUBLIC_COURSE_BACKEND_URL ?? getEnvBackendUrl(),
 ): Promise<BackendHealth> {
   sanitizeLog('Verificando estado del backend', { endpoint: baseUrl });
 
-  const response = await fetch(`${baseUrl}/health`);
+  const response = await requestBackend('/health', {}, baseUrl);
   if (!response.ok) {
     throw new Error(`Backend health failed with ${response.status}`);
   }

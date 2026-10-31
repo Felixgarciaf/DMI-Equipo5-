@@ -9,6 +9,7 @@ import type {
 import type { IncidentLocation } from '../campusops/contracts';
 import { redactForTelemetry as redactCampusOpsTelemetry } from '../campusops/telemetry/redactForTelemetry';
 import { coordinateSessionRefresh } from '../security/sessionCoordinator';
+import { planBackendRetry } from '../api/courseBackend';
 
 function pending(name: string): never {
   throw new Error(`${name} must be implemented in the assigned week`);
@@ -189,7 +190,7 @@ export function planRetry(_input: Readonly<{
   retryAfterMs?: number;
   idempotencyKey?: string;
 }>): Readonly<{ retry: boolean; delayMs: number; requiresStableIdempotencyKey: boolean }> {
-  return pending('planRetry');
+  return planBackendRetry(_input);
 }
 
 export function reduceRemoteResponses(_input: Readonly<{
