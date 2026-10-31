@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "teamId": "Equipo-05",
+  "baseCommitSha": "45f394230f59d45ac712c59d02da18acad2c198a",
+  "generatedAt": "2026-10-31T02:41:17.898312+00:00",
+  "members": [
+    {
+      "studentId": "3522110305",
+      "commitShas": [
+        "da785ea9339fa7ff951b547d973487d3074dc678"
+      ],
+      "files": [
+        "src/course-evaluation/index.ts",
+        "src/api/courseBackend.ts",
+        "course-backend/server.mjs",
+        "course-backend/campusops-self-test.mjs",
+        "tests/week-09/retry-policy.test.ts",
+        "tests/week-09/idempotency.test.ts",
+        "evidence/week-09/individual.json"
+      ],
+      "tests": [
+        "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/week-09",
+        "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand course-tests/public/week-09.test.ts -t 'retry|retries|POST'",
+        "node course-backend/self-test.mjs",
+        "node node_modules/typescript/bin/tsc --noEmit",
+        "node node_modules/eslint/bin/eslint.js src/api/courseBackend.ts src/course-evaluation/index.ts course-backend/server.mjs course-backend/campusops-self-test.mjs tests/week-09",
+        "node tools/check-architecture-boundaries.mjs"
+      ],
+      "reviews": [
+        "Revision de las seis rutas asignadas: el dominio de incidencias ya conserva huella de contenido, actor y ruta para idempotencia; la ruta legacy /v1/resources/action aceptaba claves con contenido distinto y se ajusto sin modificar campusops.mjs.",
+        "Se preservan single-flight de 401, invalidacion por logout, cola/migraciones y sincronizacion de semanas previas. No se cambia selectIncidentLocation, mapas, cache, UI de ubicacion ni archivos de companeros."
+      ],
+      "prediction": "Un GET transitorio reintenta con esperas 250/500/1000 ms y se detiene al cuarto envio. Retry-After valido es una espera minima; POST sin clave estable se bloquea. La misma clave y contenido sobreviven a timeout y refresh, y un cierre/evidencia procesado con respuesta perdida tiene un solo efecto.",
+      "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/week-09",
+      "observedResult": "37/37 pruebas propias PASS, 2 suites. 127/127 pruebas acumulativas PASS, 25 suites, usando rutas explicitas hasta Semana 08 mas tests propios. Antes: 3 pruebas publicas de retry fallaban por planRetry pendiente. Despues: 3/3 publicas de retry PASS; la prueba de ubicacion falla por selectIncidentLocation pendiente (otro integrante). Backend self-test, tipos, lint de las seis rutas y arquitectura PASS. HTTP real: tres respuestas perdidas, replays exitosos, 1 cierre en historial, 1 evidencia, version 5, contenido distinto con misma clave=409 y concurrencia=[200,200,201].",
+      "explanation": "Implemente planRetry como adaptador de la misma politica que usa el cliente HTTP real, con limite configurable de hasta cuatro envios, backoff finito, Retry-After en segundos/fecha y timeout abortable por envio. requestBackend, getAuthenticated y postAuthenticated conservan identidad y cuerpo serializado; el presupuesto tambien se comparte a traves de un 401. Los POST usan el operationId de la cola, nunca una clave nueva al reintentar. La ruta legacy compara huellas JSON canonicas y comprueba duplicados despues de leer el cuerpo para evitar carreras; se conservan los controles del dominio CampusOps. Las pruebas incluyen reloj controlado y HTTP local real para perdida de respuesta, cierre, evidencia y concurrencia. Limites: el backend didactico guarda idempotencia en memoria (no sobreviven registros al reiniciarlo); SecureStore es un doble en la prueba HTTP, no se acredita Android; el timeout cubre la obtencion de la respuesta HTTP, no una lectura posterior del cuerpo; la conexion del flujo de ubicacion corresponde al equipo. Se uso asistencia material de Codex, verificada mediante pruebas y revision de diffs.",
+      "verification": [
+        {
+          "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand tests/week-09",
+          "result": "PASS: 37 pruebas, 2 suites.",
+          "evidence": "Reloj controlado: envios a 0/250/750/1750 ms para 503 persistente. HTTP real capturado en observedHttp. Ningun POST sin clave valida llega a fetch; logs excluyen credenciales, cuerpo, actor y clave."
+        },
+        {
+          "command": "PowerShell: $scopedTests = @(rg --files tests course-tests/week-08 | Where-Object { $_ -match '\\.test\\.(ts|tsx)$' }) + @('course-tests/smoke.test.tsx','course-tests/public/week-01.test.ts','course-tests/public/week-02.test.ts','course-tests/public/week-03.test.ts','course-tests/public/week-04.test.ts','course-tests/public/week-05.test.ts','course-tests/public/week-06.test.ts','course-tests/public/week-08.test.ts'); node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand --runTestsByPath @scopedTests",
+          "result": "PASS: 127 pruebas en 25 suites.",
+          "evidence": "Incluye pruebas de cloud, seguridad, almacenamiento, Semana 08, smoke y Semana 09 propias; no ejecuta como requisitos las funciones pendientes de semanas futuras."
+        },
+        {
+          "command": "node course-backend/self-test.mjs",
+          "result": "PASS",
+          "evidence": "Week 09 idempotency PASS: lost close=1 event, lost evidence=1 entry, concurrent replays unchanged, changed key content=409. Controlled backend self-test passed."
+        },
+        {
+          "command": "node node_modules/jest/bin/jest.js --no-watchman --cacheDirectory .jest-cache --ci --runInBand course-tests/public/week-09.test.ts",
+          "result": "3 PASS; 1 FAIL fuera de la asignacion de Cesar.",
+          "evidence": "selectIncidentLocation must be implemented in the assigned week. No se cambia ni desactiva la prueba; la integracion de ubicacion queda a otro integrante."
+        },
+        {
+          "command": "node node_modules/typescript/bin/tsc --noEmit",
+          "result": "PASS, exit 0",
+          "evidence": "Sin errores de tipos."
+        },
+        {
+          "command": "node node_modules/eslint/bin/eslint.js src/api/courseBackend.ts src/course-evaluation/index.ts course-backend/server.mjs course-backend/campusops-self-test.mjs tests/week-09",
+          "result": "PASS, exit 0",
+          "evidence": "Sin errores ni advertencias en las rutas modificadas."
+        },
+        {
+          "command": "node tools/check-architecture-boundaries.mjs",
+          "result": "PASS",
+          "evidence": "24 archivos revisados, violations=[]."
+        }
+      ],
+      "observedHttp": {
+        "closeEvents": 1,
+        "evidenceCount": 1,
+        "finalVersion": 5,
+        "changedKeyStatus": 409,
+        "concurrentStatuses": [
+          200,
+          200,
+          201
+        ],
+        "observedWaitsMs": [
+          261,
+          261,
+          261
+        ],
+        "metrics": [
+          {
+            "attempt": 1,
+            "status": "timeout",
+            "durationMs": 115,
+            "delayMs": 250,
+            "observedAtMs": 1793414406650
+          },
+          {
+            "attempt": 2,
+            "status": 200,
+            "durationMs": 2,
+            "delayMs": 0,
+            "observedAtMs": 1793414406913
+          },
+          {
+            "attempt": 1,
+            "status": 409,
+            "durationMs": 4,
+            "delayMs": 0,
+            "observedAtMs": 1793414406919
+          },
+          {
+            "attempt": 1,
+            "status": "timeout",
+            "durationMs": 114,
+            "delayMs": 250,
+            "observedAtMs": 1793414407034
+          },
+          {
+            "attempt": 2,
+            "status": 200,
+            "durationMs": 2,
+            "delayMs": 0,
+            "observedAtMs": 1793414407297
+          },
+          {
+            "attempt": 1,
+            "status": "timeout",
+            "durationMs": 105,
+            "delayMs": 250,
+            "observedAtMs": 1793414407403
+          },
+          {
+            "attempt": 2,
+            "status": 200,
+            "durationMs": 4,
+            "delayMs": 0,
+            "observedAtMs": 1793414407668
+          },
+          {
+            "attempt": 1,
+            "status": 409,
+            "durationMs": 2,
+            "delayMs": 0,
+            "observedAtMs": 1793414407671
+          },
+          {
+            "attempt": 1,
+            "status": 200,
+            "durationMs": 1,
+            "delayMs": 0,
+            "observedAtMs": 1793414407672
+          },
+          {
+            "attempt": 1,
+            "status": 201,
+            "durationMs": 2,
+            "delayMs": 0,
+            "observedAtMs": 1793414407675
+          },
+          {
+            "attempt": 1,
+            "status": 200,
+            "durationMs": 3,
+            "delayMs": 0,
+            "observedAtMs": 1793414407676
+          },
+          {
+            "attempt": 1,
+            "status": 200,
+            "durationMs": 3,
+            "delayMs": 0,
+            "observedAtMs": 1793414407676
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "Aportacion individual de Cesar aprobada por el usuario. El equipo consolidara los tres registros; no es la entrega final del equipo."
+}
