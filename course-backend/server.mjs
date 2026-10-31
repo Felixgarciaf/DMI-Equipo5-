@@ -5,6 +5,8 @@ import { handleCampusOps } from './campusops.mjs';
 const host = process.env.COURSE_BACKEND_HOST ?? '127.0.0.1';
 const port = Number(process.env.COURSE_BACKEND_PORT ?? 4310);
 const completedOperations = new Map();
+const canonical = (value) => JSON.stringify(value, (_, item) => item && typeof item === 'object' && !Array.isArray(item)
+  ? Object.fromEntries(Object.keys(item).sort().map((key) => [key, item[key]])) : item);
 
 function send(response, status, body, headers = {}) {
   const value = typeof body === 'string' ? body : JSON.stringify(body);
@@ -62,13 +64,19 @@ const server = createServer(async (request, response) => {
   }
   if (request.method === 'POST' && url.pathname === '/v1/resources/action') {
     const key = request.headers['idempotency-key'];
-    if (typeof key !== 'string' || key.length < 8) return send(response, 400, { code: 'idempotency_key_required' });
-    if (completedOperations.has(key)) return send(response, 200, { ...completedOperations.get(key), duplicate: true });
+    if (typeof key !== 'string' || key.trim().length < 8) return send(response, 400, { code: 'idempotency_key_required' });
     const input = await readJson(request).catch(() => null);
-    if (!input || typeof input.resourceId !== 'string') return send(response, 422, { code: 'invalid_contract' });
+    if (!input || Array.isArray(input) || typeof input.resourceId !== 'string' || !input.resourceId.trim()) return send(response, 422, { code: 'invalid_contract' });
+    const fingerprint = canonical(input);
+    // Check after reading the body: concurrent requests cannot race across an await.
+    const previous = completedOperations.get(key);
+    if (previous) {
+      if (previous.fingerprint !== fingerprint) return send(response, 409, { code: 'idempotency_key_reused' });
+      return send(response, 200, { ...previous.result, duplicate: true });
+    }
     const result = { operationId: key, resourceId: input.resourceId, version: 2, duplicate: false };
-    completedOperations.set(key, result);
-    if (scenario === 'timeout_after_commit') return setTimeout(() => send(response, 200, result), 1500);
+    completedOperations.set(key, { fingerprint, result });
+    if (scenario === 'timeout_after_commit') return setTimeout(() => { if (!response.destroyed) send(response, 200, result); }, 1500);
     return send(response, 201, result);
   }
   return send(response, 404, { code: 'not_found' });
