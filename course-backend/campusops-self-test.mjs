@@ -73,11 +73,28 @@ export async function testCampusOps(baseUrl) {
   assert.equal(replay.incident.status, 'closed');
   assert.equal(replay.incident.version, 5);
   assert.equal(replay.incident.payload.history.filter((item) => item.action === 'close').length, 1);
+  const concurrentCloseReplays = await Promise.all([1, 2, 3].map(() =>
+    action('coordinator-1', close, 'close-lost-response', 200)));
+  for (const repeatedClose of concurrentCloseReplays) {
+    assert.equal(repeatedClose.incident.version, 5);
+    assert.equal(repeatedClose.incident.payload.history.filter((item) => item.action === 'close').length, 1);
+  }
   await action('coordinator-1', { ...close, action: 'reopen' }, 'close-lost-response', 409);
   await action('coordinator-1', { action: 'reopen', baseVersion: 5 }, 'reopen-operation');
   const evidence = { action: 'add_evidence', baseVersion: 6, evidenceId: 'synthetic-photo-1' };
-  await action('reporter-1', evidence, 'evidence-operation');
+  await assert.rejects(fetch(`${baseUrl}${actionPath}`, {
+    method: 'POST', signal: AbortSignal.timeout(250),
+    headers: {
+      Authorization: `Bearer ${accessTokenFor('reporter-1')}`,
+      'X-Course-Actor': 'reporter-1', 'Content-Type': 'application/json',
+      'Idempotency-Key': 'evidence-operation', 'X-Course-Scenario': 'timeout_after_commit',
+    }, body: JSON.stringify(evidence),
+  }));
   assert.equal((await action('reporter-1', evidence, 'evidence-operation', 200)).incident.payload.evidence.length, 1);
+  const afterEvidence = await call('/v1/incidents/campus-inc-001', 200);
+  assert.equal(afterEvidence.version, 7);
+  assert.equal(afterEvidence.payload.history.filter((item) => item.action === 'add_evidence').length, 1);
+  assert.equal(afterEvidence.payload.history.filter((item) => item.action === 'close').length, 1);
   await action('reporter-1', { action: 'comment', baseVersion: 7, text: 'Nota ficticia' }, 'comment-operation');
   const create = { category: 'water', description: 'Fuga simulada', location: 'Zona manual ficticia' };
   const created = await call('/v1/incidents', 201, 'reporter-1', create, 'create-operation');
@@ -100,5 +117,22 @@ export async function testCampusOps(baseUrl) {
     },
   });
   await assert.rejects(malformed.json());
+  const legacyPath = `${baseUrl}/v1/resources/action`;
+  const legacyInit = {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': 'week09-legacy-stable' },
+    body: JSON.stringify({ resourceId: 'resource-1', content: { a: 1, b: 2 } }),
+  };
+  assert.equal((await fetch(legacyPath, legacyInit)).status, 201);
+  const reordered = await fetch(legacyPath, { ...legacyInit, body: JSON.stringify({ content: { b: 2, a: 1 }, resourceId: 'resource-1' }) });
+  assert.equal(reordered.status, 200);
+  assert.equal((await reordered.json()).duplicate, true);
+  const changed = await fetch(legacyPath, { ...legacyInit, body: JSON.stringify({ resourceId: 'resource-2' }) });
+  assert.equal(changed.status, 409);
+  assert.equal((await changed.json()).code, 'idempotency_key_reused');
+  const simultaneous = await Promise.all([1, 2, 3].map(() => fetch(legacyPath, {
+    ...legacyInit, headers: { ...legacyInit.headers, 'Idempotency-Key': 'week09-concurrent' },
+  })));
+  assert.deepEqual(simultaneous.map((item) => item.status).sort(), [200, 200, 201]);
+  process.stdout.write('Week 09 idempotency PASS: lost close=1 event, lost evidence=1 entry, concurrent replays unchanged, changed key content=409.\n');
   process.stdout.write('CampusOps backend contracts: roles, reassignment conflict, lost response, idempotency, evidence and geocoding PASS.\n');
 }
