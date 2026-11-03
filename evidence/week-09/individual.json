@@ -6,6 +6,61 @@
   "generatedAt": "2026-10-31T02:41:17.898312+00:00",
   "members": [
     {
+      "studentId": "3523110172",
+      "commitShas": [
+        "ad74c7444562155d5909d800eba56c7ef3a04456",
+        "fa75f2d7604b37b68ef2120bafd5c56cf0699490",
+        "8197385113befefff8e59d271c949204662380c4"
+      ],
+      "files": [
+        "src/campusops/domain/ports.ts",
+        "src/campusops/infrastructure/geocoding-adapter.ts",
+        "src/campusops/infrastructure/location-cache.ts",
+        "tests/week-09/location-adapter.test.ts",
+        "tests/week-09/location-cache.test.ts"
+      ],
+      "tests": [
+        "tests/week-09/location-adapter.test.ts",
+        "tests/week-09/location-cache.test.ts"
+      ],
+      "reviews": [
+        "La historia de Git atribuye a Félix la definición del puerto de ubicación, el adaptador de geocodificación y la caché con expiración; la ejecución integrada comprueba sus suites."
+      ],
+      "prediction": "Las respuestas de proveedor incompletas o fuera de rango deben usar la referencia manual y no contaminar la caché; las consultas equivalentes deben reutilizarse hasta expirar el TTL.",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "observedResult": "PASS: la ejecución integrada terminó con 6 suites y 57 pruebas aprobadas, incluidas las suites de adaptador y caché.",
+      "explanation": "Los SHA registrados corresponden a los commits reales de Félix para el contrato LocationProviderPort, el adaptador HTTP con fallback manual y la caché con TTL. La geocodificación es un doble didáctico; no se atribuye una integración con un proveedor externo real."
+    },
+    {
+      "studentId": "3522110551",
+      "commitShas": [
+        "cdb50c69c138e591a03857447a3360ac09806bc8"
+      ],
+      "files": [
+        "App.tsx",
+        "course-tests/public/week-09.test.ts",
+        "docs/resilience-policy.md",
+        "src/campusops/bootstrap.ts",
+        "src/campusops/infrastructure/geocoding-adapter.ts",
+        "src/campusops/ui/IncidentExplorerScreen.tsx",
+        "src/course-evaluation/index.ts",
+        "tests/storage/storageFailureScreen.test.tsx",
+        "tests/week-09/location-capture.test.tsx"
+      ],
+      "tests": [
+        "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+        "python tools/course_public_evaluator.py --week 9 --mode verify --execute-toolchain",
+        "npm run backend:self-test"
+      ],
+      "reviews": [
+        "Integración del puerto de ubicación en la pantalla existente, revisión de la alternativa manual, validación de contratos y preparación de evidencia de resiliencia."
+      ],
+      "prediction": "La captura manual debe poder completarse desde la interfaz sin conexión, mostrar una etiqueta válida sin coordenadas inventadas y conservar el error si ocurre una excepción inesperada.",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "observedResult": "PASS: 6 suites y 57 pruebas; el evaluador oficial de verificación también terminó con estado pass.",
+      "explanation": "La contribución integra la captura manual y la resolución por proveedor en IncidentExplorerScreen, valida la etiqueta antes de continuar y conserva un resultado visible en el detalle seleccionado. El resultado es un borrador de interfaz: el flujo existente no persiste ni envía una modificación de ubicación."
+    },
+    {
       "studentId": "3522110305",
       "commitShas": [
         "da785ea9339fa7ff951b547d973487d3074dc678"

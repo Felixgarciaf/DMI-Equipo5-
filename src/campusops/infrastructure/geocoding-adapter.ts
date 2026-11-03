@@ -22,7 +22,7 @@ const DEFAULT_ACTOR_ID = 'reporter-1';
 const DEFAULT_ACCESS_TOKEN = 'course-valid-token:reporter-1:g1';
 const DEFAULT_TIMEOUT_MS = 1_000;
 const DEFAULT_QUERY = 'Edificio de prueba A';
-const DEFAULT_MANUAL_LABEL = 'Ubicacion manual sin geocodificacion';
+const DEFAULT_MANUAL_LABEL = 'Ubicación manual sin geocodificación';
 
 export function normalizeProviderLocation(
   providerResult: unknown,
