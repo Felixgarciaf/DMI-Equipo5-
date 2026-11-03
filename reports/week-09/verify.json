@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "week": 9,
   "mode": "verify",
-  "commitSha": "cdb50c69c138e591a03857447a3360ac09806bc8",
-  "evaluatedAt": "2026-11-03T01:21:22.368169+00:00",
+  "commitSha": "81f1fb139a52a9918901086ecfecb420509b7188",
+  "evaluatedAt": "2026-11-03T02:13:50.666271+00:00",
   "status": "pass",
   "checks": [
     {
@@ -49,7 +49,7 @@
     {
       "id": "toolchain_4",
       "status": "pass",
-      "detail": "npm run test:smoke\n> dmi-react-native-starter@1.0.0 test:smoke\n> jest --no-watchman --cacheDirectory .jest-cache --ci --runInBand course-tests/smoke.test.tsx\n\n  console.log\n    SEMANA 6 / UI: \"Login requerido\" visible tras cambio a anonymous.\n\n      at Object.log (course-tests/smoke.test.tsx:45:11)\n\n\nPASS course-tests/smoke.test.tsx\n  âˆš renders the reproducible baseline and resolves backend state (569 ms)\n  âˆš shows the login-required screen after the session becomes anonymous (72 ms)\n\nTest Suites: 1 passed, 1 total\nTests:       2 passed, 2 total\nSnapshots:   0 total\nTime:        3.731 s, estimated 5 s\nRan all test suites matching /course-tests\\\\smoke.test.tsx/i."
+      "detail": "npm run test:smoke\n> dmi-react-native-starter@1.0.0 test:smoke\n> jest --no-watchman --cacheDirectory .jest-cache --ci --runInBand course-tests/smoke.test.tsx\n\n  console.log\n    SEMANA 6 / UI: \"Login requerido\" visible tras cambio a anonymous.\n\n      at Object.log (course-tests/smoke.test.tsx:45:11)\n\n\nPASS course-tests/smoke.test.tsx\n  âˆš renders the reproducible baseline and resolves backend state (452 ms)\n  âˆš shows the login-required screen after the session becomes anonymous (53 ms)\n\nTest Suites: 1 passed, 1 total\nTests:       2 passed, 2 total\nSnapshots:   0 total\nTime:        3.033 s, estimated 4 s\nRan all test suites matching /course-tests\\\\smoke.test.tsx/i."
     },
     {
       "id": "toolchain_5",

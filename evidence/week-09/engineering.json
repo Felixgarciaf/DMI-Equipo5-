@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "cdb50c69c138e591a03857447a3360ac09806bc8",
+  "commitSha": "81f1fb139a52a9918901086ecfecb420509b7188",
   "decision": "Mantener la validación estricta de la respuesta geocodificada y ofrecer una captura manual operativa desde la pantalla existente. Reutilizar el puerto y el adaptador de CampusOps permite conservar una referencia textual cuando el proveedor simulado falla; los reintentos del cliente HTTP permanecen acotados y las escrituras exigen una clave estable de idempotencia.",
   "alternatives": [
     "Aceptar sin validación cualquier objeto del proveedor que incluya label y coordenadas; reduce el código, pero permite introducir ubicaciones inválidas o inconsistentes en el dominio.",
@@ -24,12 +24,12 @@
     },
     {
       "command": "python tools/course_public_evaluator.py --week 9 --mode verify --execute-toolchain",
-      "result": "PASS: evaluador oficial de verificación, SHA cdb50c69c138e591a03857447a3360ac09806bc8.",
+      "result": "PASS: evaluador oficial de verificación, SHA 81f1fb139a52a9918901086ecfecb420509b7188.",
       "evidence": "Pasaron los controles estructurales, typecheck, lint (con dos advertencias preexistentes), audit:ci, smoke y self-test del backend."
     },
     {
       "command": "python tools/course_public_evaluator.py --week 9 --mode public --execute-toolchain",
-      "result": "PASS: evaluador oficial público, SHA cdb50c69c138e591a03857447a3360ac09806bc8.",
+      "result": "PASS: evaluador oficial público, SHA 81f1fb139a52a9918901086ecfecb420509b7188.",
       "evidence": "Pasaron los archivos requeridos, los esquemas de ambos reportes, engineering.json, los tres registros individuales y las pruebas públicas de Semana 9."
     },
     {
