@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "mode": "fault-injection",
+  "commitSha": "cdb50c69c138e591a03857447a3360ac09806bc8",
+  "generatedAt": "2026-11-03T01:21:30.127031+00:00",
+  "evaluatedAt": "2026-11-03T01:21:30.127031+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "id": "geocoding_provider_validation_and_fallback",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "evidence": "La ejecución terminó con 6 suites y 57 pruebas aprobadas; incluye validación de etiqueta, rangos, NaN, valores infinitos, respuestas incompletas y fallback manual sin coordenadas."
+    },
+    {
+      "id": "provider_http_errors_fall_back_to_manual",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "evidence": "La ejecución terminó con 6 suites y 57 pruebas aprobadas; las pruebas cubren HTTP 429/500, JSON malformado, desconexión, timeout y ausencia de caché para respuestas no válidas."
+    },
+    {
+      "id": "manual_capture_from_interface",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "evidence": "La ejecución terminó con 6 suites y 57 pruebas aprobadas; cuatro pruebas de UI verifican captura manual, respuesta del proveedor, fallback ante HTTP 503 y rechazo de etiqueta vacía."
+    }
+  ]
+}
