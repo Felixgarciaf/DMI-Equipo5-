@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "mode": "retry-metrics",
+  "commitSha": "81f1fb139a52a9918901086ecfecb420509b7188",
+  "generatedAt": "2026-11-03T01:21:30.127031+00:00",
+  "evaluatedAt": "2026-11-03T01:21:30.127031+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "id": "retry_after_header_respected",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "evidence": "La suite de reintentos informa los offsets medidos [0,250,750,1750] ms, cuatro envíos como máximo y respeto de Retry-After válido; el resultado agregado fue 6 suites y 57 pruebas aprobadas."
+    },
+    {
+      "id": "post_requires_stable_idempotency_key",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09 course-tests/public/week-09.test.ts",
+      "evidence": "Las pruebas verifican que POST sin clave estable se bloquea, y que los reintentos conservan la misma clave y el mismo cuerpo serializado."
+    },
+    {
+      "id": "lost_response_replay_with_same_key",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm run backend:self-test",
+      "evidence": "El self-test registró un único evento de cierre y una evidencia, replays concurrentes sin cambios duplicados y conflicto 409 al reutilizar la clave con contenido distinto."
+    }
+  ]
+}

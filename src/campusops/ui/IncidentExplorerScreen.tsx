@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import type { CampusOpsApplication } from '../application/incidentQueries';
+import type { LocationProviderPort } from '../domain/ports';
 import type { IncidentDetail, IncidentListItem } from '../domain/incident';
+import type { IncidentLocation } from '../contracts';
 
 type Props = Readonly<{
   application: CampusOpsApplication;
   backendStatus: 'checking' | 'available' | 'offline';
+  locationProvider: LocationProviderPort;
 }>;
 
 export function IncidentExplorerScreen({
   application,
   backendStatus,
+  locationProvider,
 }: Props) {
   const [incidents, setIncidents] = useState<readonly IncidentListItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -19,6 +23,35 @@ export function IncidentExplorerScreen({
   const [isLoading, setIsLoading] = useState(true);
   const [detailNotFound, setDetailNotFound] = useState(false);
   const [storageError, setStorageError] = useState(false);
+  const [locationQuery, setLocationQuery] = useState('');
+  const [manualLocationLabel, setManualLocationLabel] = useState('');
+  const [capturedLocation, setCapturedLocation] = useState<IncidentLocation | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isResolvingLocation, setIsResolvingLocation] = useState(false);
+
+  async function resolveLocation(useManualOnly: boolean): Promise<void> {
+    const manualLabel = manualLocationLabel.trim();
+    if (!manualLabel) {
+      setLocationError('Escribe una referencia manual válida antes de continuar.');
+      setCapturedLocation(null);
+      return;
+    }
+
+    setLocationError(null);
+    setIsResolvingLocation(true);
+    try {
+      const location = await locationProvider.resolveIncidentLocation({
+        query: useManualOnly ? '' : locationQuery.trim(),
+        manualLabel,
+      });
+      setCapturedLocation(location);
+    } catch {
+      setCapturedLocation(null);
+      setLocationError('No fue posible resolver la ubicación. Revisa la conexión e inténtalo nuevamente.');
+    } finally {
+      setIsResolvingLocation(false);
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -91,7 +124,11 @@ export function IncidentExplorerScreen({
               <Pressable
                 accessibilityRole="button"
                 key={incident.id}
-                onPress={() => setSelectedId(incident.id)}
+                onPress={() => {
+                  setSelectedId(incident.id);
+                  setCapturedLocation(null);
+                  setLocationError(null);
+                }}
                 style={[
                   styles.listItem,
                   incident.id === selectedId && styles.selectedItem,
@@ -131,7 +168,7 @@ export function IncidentExplorerScreen({
               </Text>
 
               <Text>
-                Ubicación: {detail.location.label}
+                Ubicación: {(capturedLocation ?? detail.location).label}
               </Text>
 
               <Text>
@@ -143,6 +180,60 @@ export function IncidentExplorerScreen({
           ) : (
             <Text>Seleccione una incidencia.</Text>
           )}
+
+          <View style={styles.locationCapture}>
+            <Text style={styles.sectionTitle}>Captura de ubicación</Text>
+            <Text>La consulta usa el proveedor didáctico; si no está disponible, se conserva la referencia manual.</Text>
+            <TextInput
+              accessibilityLabel="Consulta de ubicación"
+              onChangeText={(value) => {
+                setLocationQuery(value);
+                setCapturedLocation(null);
+                setLocationError(null);
+              }}
+              placeholder="Consulta opcional para geocodificación"
+              value={locationQuery}
+            />
+            <TextInput
+              accessibilityLabel="Ubicación manual"
+              onChangeText={(value) => {
+                setManualLocationLabel(value);
+                setCapturedLocation(null);
+                setLocationError(null);
+              }}
+              placeholder="Edificio, zona o referencia"
+              value={manualLocationLabel}
+            />
+            <Pressable
+              accessibilityRole="button"
+              disabled={isResolvingLocation}
+              onPress={() => void resolveLocation(false)}
+              style={styles.locationButton}
+              testID="resolve-location"
+            >
+              <Text>Resolver ubicación</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              disabled={isResolvingLocation}
+              onPress={() => void resolveLocation(true)}
+              style={styles.locationButton}
+              testID="use-manual-location"
+            >
+              <Text>Usar ubicación manual</Text>
+            </Pressable>
+            {isResolvingLocation && <Text>Resolviendo ubicación...</Text>}
+            {locationError && <Text accessibilityRole="alert">{locationError}</Text>}
+            {capturedLocation && (
+              <View accessibilityRole="summary" testID="captured-location">
+                <Text>Ubicación seleccionada: {capturedLocation.label}</Text>
+                <Text>Origen: {capturedLocation.source === 'manual' ? 'captura manual' : 'proveedor didáctico'}</Text>
+                {capturedLocation.latitude !== undefined && capturedLocation.longitude !== undefined && (
+                  <Text>Coordenadas: {capturedLocation.latitude}, {capturedLocation.longitude}</Text>
+                )}
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </View>
@@ -206,5 +297,19 @@ const styles = StyleSheet.create({
 
   detailBody: {
     gap: 6,
+  },
+
+  locationCapture: {
+    gap: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#d6dbe3',
+    paddingTop: 12,
+  },
+
+  locationButton: {
+    borderWidth: 1,
+    borderColor: '#1d4ed8',
+    borderRadius: 8,
+    padding: 10,
   },
 });

@@ -7,8 +7,10 @@ import type {
   SyncRecord,
 } from './contracts';
 import type { IncidentLocation } from '../campusops/contracts';
+import { normalizeProviderLocation } from '../campusops/infrastructure/geocoding-adapter';
 import { redactForTelemetry as redactCampusOpsTelemetry } from '../campusops/telemetry/redactForTelemetry';
 import { coordinateSessionRefresh } from '../security/sessionCoordinator';
+import { planBackendRetry } from '../api/courseBackend';
 
 function pending(name: string): never {
   throw new Error(`${name} must be implemented in the assigned week`);
@@ -189,7 +191,7 @@ export function planRetry(_input: Readonly<{
   retryAfterMs?: number;
   idempotencyKey?: string;
 }>): Readonly<{ retry: boolean; delayMs: number; requiresStableIdempotencyKey: boolean }> {
-  return pending('planRetry');
+  return planBackendRetry(_input);
 }
 
 export function reduceRemoteResponses(_input: Readonly<{
@@ -205,7 +207,11 @@ export function reducePermissionLifecycle(
   return pending('reducePermissionLifecycle');
 }
 
-/** Week 09: see docs/CAMPUSOPS_API.md; this is not a completed solution. */
-export function selectIncidentLocation(_provider: unknown, _manualLabel: string): IncidentLocation {
-  return pending('selectIncidentLocation');
+/** Valida el resultado del proveedor y conserva la referencia manual ante datos no utilizables. */
+export function selectIncidentLocation(provider: unknown, manualLabel: string): IncidentLocation {
+  if (typeof manualLabel !== 'string' || manualLabel.trim() === '') {
+    throw new RangeError('La referencia manual de ubicación no puede estar vacía');
+  }
+
+  return normalizeProviderLocation(provider, manualLabel.trim());
 }

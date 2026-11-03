@@ -6,7 +6,7 @@ import {
   getBackendHealth,
   subscribeToSessionStatus,
 } from './src/api/courseBackend';
-import { campusOpsApplication } from './src/campusops/bootstrap';
+import { campusOpsApplication, campusOpsLocationProvider } from './src/campusops/bootstrap';
 import { IncidentExplorerScreen } from './src/campusops/ui/IncidentExplorerScreen';
 
 export default function App() {
@@ -47,7 +47,11 @@ export default function App() {
 
   return (
     <>
-      <IncidentExplorerScreen application={campusOpsApplication} backendStatus={status} />
+      <IncidentExplorerScreen
+        application={campusOpsApplication}
+        backendStatus={status}
+        locationProvider={campusOpsLocationProvider}
+      />
       <StatusBar style="auto" />
     </>
   );

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "commitSha": "81f1fb139a52a9918901086ecfecb420509b7188",
+  "decision": "Mantener la validación estricta de la respuesta geocodificada y ofrecer una captura manual operativa desde la pantalla existente. Reutilizar el puerto y el adaptador de CampusOps permite conservar una referencia textual cuando el proveedor simulado falla; los reintentos del cliente HTTP permanecen acotados y las escrituras exigen una clave estable de idempotencia.",
+  "alternatives": [
+    "Aceptar sin validación cualquier objeto del proveedor que incluya label y coordenadas; reduce el código, pero permite introducir ubicaciones inválidas o inconsistentes en el dominio.",
+    "Usar siempre una ubicación manual fija; simplifica la recuperación, pero descarta resultados válidos del proveedor y no representa la referencia indicada por la persona usuaria.",
+    "Validar el proveedor, mostrar la captura manual desde la interfaz existente y limitar los reintentos con idempotencia; requiere más validaciones, pero conserva el origen de la ubicación y evita repetir escrituras."
+  ],
+  "tradeoff": "La decisión prioriza coherencia y trazabilidad frente a una solución más breve: añade validación, captura manual y tratamiento explícito de fallos. Las pruebas demuestran la selección y presentación de la ubicación como borrador; la pantalla actual no ofrece una operación de creación o actualización que la persista.",
+  "requirementIds": [
+    "AC-01",
+    "AC-02",
+    "AC-03",
+    "AC-04",
+    "AC-05"
+  ],
+  "verification": [
+    {
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand tests/week-09/location-adapter.test.ts tests/week-09/retry-policy.test.ts tests/week-09/idempotency.test.ts course-tests/public/week-09.test.ts",
+      "result": "PASS: 6 suites y 57 pruebas aprobadas.",
+      "evidence": "La ejecución agregada incluyó geocodificación, caché, captura manual de UI, reintentos, idempotencia y el contrato público de Semana 9."
+    },
+    {
+      "command": "python tools/course_public_evaluator.py --week 9 --mode verify --execute-toolchain",
+      "result": "PASS: evaluador oficial de verificación, SHA 81f1fb139a52a9918901086ecfecb420509b7188.",
+      "evidence": "Pasaron los controles estructurales, typecheck, lint (con dos advertencias preexistentes), audit:ci, smoke y self-test del backend."
+    },
+    {
+      "command": "python tools/course_public_evaluator.py --week 9 --mode public --execute-toolchain",
+      "result": "PASS: evaluador oficial público, SHA 81f1fb139a52a9918901086ecfecb420509b7188.",
+      "evidence": "Pasaron los archivos requeridos, los esquemas de ambos reportes, engineering.json, los tres registros individuales y las pruebas públicas de Semana 9."
+    },
+    {
+      "command": "npm run backend:self-test",
+      "result": "PASS: backend didáctico validado.",
+      "evidence": "El self-test del backend confirma idempotencia, respuesta perdida y conflictos de operación sin duplicar historial."
+    }
+  ]
+}

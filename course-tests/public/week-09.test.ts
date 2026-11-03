@@ -4,9 +4,23 @@ test('CampusOps accepts valid geocoding and otherwise keeps manual incident loca
   expect(selectIncidentLocation({ label: 'Zona de prueba', latitude: 0, longitude: 0 }, 'Edificio manual')).toEqual({
     source: 'provider', label: 'Zona de prueba', latitude: 0, longitude: 0,
   });
-  for (const value of [null, { status: 429 }, { label: 'Incompleta' }, { label: 'Inválida', latitude: 91, longitude: 0 }]) {
+  for (const value of [
+    null,
+    { status: 429 },
+    { label: 'Incompleta' },
+    { label: 'Inválida', latitude: 91, longitude: 0 },
+    { label: 'Inválida', latitude: 0, longitude: 181 },
+    { label: 'Inválida', latitude: Number.NaN, longitude: 0 },
+    { label: 'Inválida', latitude: 0, longitude: Number.POSITIVE_INFINITY },
+    { label: '', latitude: 0, longitude: 0 },
+    { label: 'Inválida', latitude: '19', longitude: 0 },
+  ]) {
     expect(selectIncidentLocation(value, 'Edificio manual')).toEqual({ source: 'manual', label: 'Edificio manual' });
   }
+});
+
+test('CampusOps requires a non-empty manual location label', () => {
+  expect(() => selectIncidentLocation(null, '   ')).toThrow(RangeError);
 });
 
 test('CampusOps can retry a lost resolution response only with a stable operation key', () => {
